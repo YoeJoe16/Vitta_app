@@ -2,8 +2,10 @@ package com.ucr.salud.service;
 
 import com.ucr.salud.model.Rango;
 import com.ucr.salud.model.User;
+import com.ucr.salud.model.dto.UserDTO;
 import com.ucr.salud.repository.RangoRepository;
 import com.ucr.salud.repository.UserRepository;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +37,16 @@ public class UserService {
     }
 
     // Crear nuevo usuario
-    public User crear(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Ya existe un usuario con el email: " + user.getEmail());
+    public User add(UserDTO dto) throws BadRequestException {
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new BadRequestException("Ya existe un usuario con ese correo");
         }
-        if (user.getTotalPoints() == null) {
-            user.setTotalPoints(0);
-        }
-        actualizarRango(user);
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        user.setTotalPoints(0);
+        user.setRange("Bronce");
         return userRepository.save(user);
     }
 

@@ -2,11 +2,14 @@ package com.ucr.salud.service;
 
 import com.ucr.salud.model.ComidaConsumida;
 import com.ucr.salud.model.TipoComida;
+import com.ucr.salud.model.dto.ComidaConsumidaDTO;
 import com.ucr.salud.repository.ComidaConsumidaRepository;
 import com.ucr.salud.repository.RegistroDiarioRepository;
 import com.ucr.salud.repository.TipoComidaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,23 +50,24 @@ public class ComidaConsumidaService {
     }
 
     // Registrar una comida consumida; calcula puntos automáticamente
-    public ComidaConsumida registrar(ComidaConsumida comida) {
-        if (!registroDiarioRepository.existsById(comida.getIdRegistro())) {
-            throw new RuntimeException("Registro diario no encontrado con id: " + comida.getIdRegistro());
+    public ComidaConsumida registrar(ComidaConsumidaDTO dto) {
+        if (!registroDiarioRepository.existsById(dto.getIdRegistro())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registro no encontrado con id: " + dto.getIdRegistro());
         }
+        TipoComida tipo = tipoComidaRepository.findById(dto.getIdTipoComida())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de comida no encontrado con id: " + dto.getIdTipoComida()));
 
-        TipoComida tipo = tipoComidaRepository.findById(comida.getIdTipoComida())
-                .orElseThrow(() -> new RuntimeException("TipoComida no encontrado con id: " + comida.getIdTipoComida()));
+        int puntos = tipo.getPuntosBase() * dto.getCantidadPorciones();
 
-        // Puntos = puntosBase del tipo * cantidadPorciones
-        int porciones = comida.getCantidadPorciones() != null ? comida.getCantidadPorciones() : 1;
-        comida.setPuntosOtorgados(tipo.getPuntosBase() * porciones);
+        ComidaConsumida comida = new ComidaConsumida();
+        comida.setIdRegistro(dto.getIdRegistro());
+        comida.setIdTipoComida(dto.getIdTipoComida());
+        comida.setCantidadPorciones(dto.getCantidadPorciones());
+        comida.setMomentoDelDia(dto.getMomentoDelDia());
+        comida.setPuntosOtorgados(puntos);
 
         ComidaConsumida guardada = comidaConsumidaRepository.save(comida);
-
-        // Recalcular puntos del día
-        registroDiarioService.recalcularPuntos(comida.getIdRegistro());
-
+        registroDiarioService.recalcularPuntos(dto.getIdRegistro());
         return guardada;
     }
 

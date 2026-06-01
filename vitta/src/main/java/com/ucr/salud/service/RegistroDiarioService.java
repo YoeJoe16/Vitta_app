@@ -1,13 +1,18 @@
 package com.ucr.salud.service;
 
 import com.ucr.salud.model.RegistroDiario;
+import com.ucr.salud.model.dto.RegistroDiarioDTO;
 import com.ucr.salud.repository.ComidaConsumidaRepository;
 import com.ucr.salud.repository.EjercicioRealizadoRepository;
 import com.ucr.salud.repository.HabitoSaludableRepository;
 import com.ucr.salud.repository.RegistroDiarioRepository;
 import com.ucr.salud.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,19 +59,21 @@ public class RegistroDiarioService {
     }
 
     // Crear nuevo registro diario (solo uno por usuario por día)
-    public RegistroDiario crear(RegistroDiario registro) {
-        if (!userRepository.existsById(registro.getIdUsuario())) {
-            throw new RuntimeException("Usuario no encontrado con id: " + registro.getIdUsuario());
+    public RegistroDiario add(RegistroDiarioDTO dto) {
+        if (!userRepository.existsById(dto.getIdUsuario())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado con id: " + dto.getIdUsuario());
         }
-        Optional<RegistroDiario> existente = registroDiarioRepository
-                .findByIdUsuarioAndFecha(registro.getIdUsuario(), registro.getFecha());
-        if (existente.isPresent()) {
-            throw new RuntimeException("Ya existe un registro para el usuario "
-                    + registro.getIdUsuario() + " en la fecha " + registro.getFecha());
-        }
-        if (registro.getPuntosDelDia() == null) {
-            registro.setPuntosDelDia(0);
-        }
+        registroDiarioRepository.findByIdUsuarioAndFecha(dto.getIdUsuario(), dto.getFecha())
+                .ifPresent(r -> {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya existe un registro para ese día");
+                });
+
+        RegistroDiario registro = new RegistroDiario();
+        registro.setIdUsuario(dto.getIdUsuario());
+        registro.setFecha(dto.getFecha());
+        registro.setHoraRegistro(dto.getHoraRegistro());
+        registro.setNotas(dto.getNotas());
+        registro.setPuntosDelDia(0);
         return registroDiarioRepository.save(registro);
     }
 
