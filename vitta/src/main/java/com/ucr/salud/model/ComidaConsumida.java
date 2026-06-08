@@ -14,17 +14,19 @@ public class ComidaConsumida {
     private Integer cantidadPorciones;
     private String momentoDelDia;
     private Integer puntosOtorgados;
+    private Integer caloriasConsumidas;
 
     public ComidaConsumida() {
     }
 
-    public ComidaConsumida(Integer id, Integer idRegistro, Integer idTipoComida, Integer cantidadPorciones, String momentoDelDia, Integer puntosOtorgados) {
+    public ComidaConsumida(Integer id, Integer idRegistro, Integer idTipoComida, Integer cantidadPorciones, String momentoDelDia, Integer puntosOtorgados, Integer caloriasConsumidas) {
         this.id = id;
         this.idRegistro = idRegistro;
         this.idTipoComida = idTipoComida;
         this.cantidadPorciones = cantidadPorciones;
         this.momentoDelDia = momentoDelDia;
         this.puntosOtorgados = puntosOtorgados;
+        this.caloriasConsumidas = caloriasConsumidas;
     }
 
     public Integer getId() {
@@ -73,5 +75,13 @@ public class ComidaConsumida {
 
     public void setPuntosOtorgados(Integer puntosOtorgados) {
         this.puntosOtorgados = puntosOtorgados;
+    }
+
+    public Integer getCaloriasConsumidas() {
+        return caloriasConsumidas;
+    }
+
+    public void setCaloriasConsumidas(Integer caloriasConsumidas) {
+        this.caloriasConsumidas = caloriasConsumidas;
     }
 }
