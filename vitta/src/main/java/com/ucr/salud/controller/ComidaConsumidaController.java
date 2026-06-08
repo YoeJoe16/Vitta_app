@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -94,5 +95,16 @@ public class ComidaConsumidaController {
 
 
     // falta Devuelve la información nutricional de una comida por que falta el metodo de conteo de calorias por comida
+    @GetMapping("/comidas/registrarCalorias/{id}/{calorias}")
+    public ResponseEntity<?> registrarCalorias(@PathVariable Integer id,@PathVariable Integer calorias) {
+        Optional<ComidaConsumida> comidaConsumida = service.registrarCalorias(id,calorias);
+        if (comidaConsumida.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(comidaConsumida);
+    }
 
+    public Integer sumaCaloriasPorRegistro(Integer idRegistro){
+        return service.sumaCaloriasPorRegistro(idRegistro);
+    }
 }
