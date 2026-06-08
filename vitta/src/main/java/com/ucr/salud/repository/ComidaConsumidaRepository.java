@@ -20,4 +20,9 @@ public interface ComidaConsumidaRepository extends JpaRepository<ComidaConsumida
     // Suma total de puntos otorgados en un registro (usado para recalcularPuntos)
     @Query("SELECT COALESCE(SUM(c.puntosOtorgados), 0) FROM ComidaConsumida c WHERE c.idRegistro = :idRegistro")
     Integer sumPuntosByIdRegistro(@Param("idRegistro") Integer idRegistro);
+
+    // Suma total de calorías consumidas en un registro diario
+    @Query("SELECT COALESCE(SUM(c.caloriasConsumidas), 0) FROM ComidaConsumida c WHERE c.idRegistro = :idRegistro")
+    Integer sumCaloriasByIdRegistro(@Param("idRegistro") Integer idRegistro);
 }
+

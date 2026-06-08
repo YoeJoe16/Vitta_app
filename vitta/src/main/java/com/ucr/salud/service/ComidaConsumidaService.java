@@ -103,4 +103,22 @@ public class ComidaConsumidaService {
     public Integer sumaPuntosPorRegistro(Integer idRegistro) {
         return comidaConsumidaRepository.sumPuntosByIdRegistro(idRegistro);
     }
+
+    // Registrar o actualizar las calorías de una comida consumida
+    public ComidaConsumida registrarCalorias(Integer id, Integer calorias) {
+        if (calorias == null || calorias < 0) {
+            throw new RuntimeException("El valor de calorías debe ser un número positivo.");
+        }
+
+        ComidaConsumida comida = comidaConsumidaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ComidaConsumida no encontrada con id: " + id));
+
+        comida.setCaloriasConsumidas(calorias);
+        return comidaConsumidaRepository.save(comida);
+    }
+
+    // Suma total de calorías consumidas en un registro diario
+    public Integer sumaCaloriasPorRegistro(Integer idRegistro) {
+        return comidaConsumidaRepository.sumCaloriasByIdRegistro(idRegistro);
+    }
 }
