@@ -111,7 +111,7 @@ public class LogroService {
     }
 
     // Evaluar y otorgar logros automáticamente según puntos totales del usuario
-    public void evaluarLogrosAutomaticos(Integer idUsuario) {
+    public Logro evaluarLogrosAutomaticos(Integer idUsuario) {
         User user = userRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
 
@@ -124,6 +124,7 @@ public class LogroService {
                 otorgarLogro(idUsuario, logro.getId());
             }
         }
+        return null;
     }
 
     // Evaluación simple de condición basada en puntos totales

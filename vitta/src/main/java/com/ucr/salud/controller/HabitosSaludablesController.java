@@ -1,0 +1,103 @@
+package com.ucr.salud.controller;
+
+import com.ucr.salud.model.EjercicioRealizado;
+import com.ucr.salud.model.HabitoSaludable;
+import com.ucr.salud.service.HabitoSaludableService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api")
+public class HabitosSaludablesController {
+private HabitoSaludableService service;
+
+    //add
+    @PostMapping("/Habitos/add")
+    public ResponseEntity<?> registro(@Valid @RequestBody HabitoSaludable habitoSaludable, BindingResult result){
+        if(result.hasErrors()){
+            List<String> errors =new ArrayList<>();
+            for (ObjectError error: result.getAllErrors()){
+                errors.add(error.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errors);
+        }
+        if (service.registrar(habitoSaludable)==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ya esta registrado el id o no cumple los campos obligatorios");
+        }
+        return ResponseEntity.ok("Ejercicio registrada exitosamente");
+    }
+    //findAll
+    @GetMapping("/Habitos/all")
+    public ResponseEntity<List<?>> obtenerTodos(){
+        List<HabitoSaludable> habitosSaludables=service.obtenerTodos();
+        if(habitosSaludables.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(habitosSaludables);
+    }
+
+    @GetMapping("/Habitos/{id}")
+    public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
+        Optional<HabitoSaludable> habitoSaludable = service.obtenerPorId(id);
+        if (habitoSaludable.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(habitoSaludable);
+    }
+
+    @GetMapping("/Habitos/{idRegistro}")
+    public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
+        List<HabitoSaludable> habitoSaludable=service.obtenerPorRegistro(idRegistro);
+        if(habitoSaludable.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(habitoSaludable);
+    }
+
+    @GetMapping("/Habitos/{idRegistro}")
+    public ResponseEntity<List<?>> obtenerCompletadosPorRegistro(@PathVariable Integer idRegistro){
+        List<HabitoSaludable> habitoSaludable=service.obtenerCompletadosPorRegistro(idRegistro);
+        if(habitoSaludable.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(habitoSaludable);
+    }
+
+    @PutMapping("/Habitos/actualizar/{id}")
+    public ResponseEntity<?> actualizar(@PathVariable Integer id, @Valid @RequestBody HabitoSaludable habitoSaludable) {
+        if (service.actualizar(id,habitoSaludable)==null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok("Habito actualizado exitosamente");
+    }
+
+    @PutMapping("/Habitos/actualizarCompletado/{id}")
+    public ResponseEntity<?> actualizarCompletado(@PathVariable Integer id, HabitoSaludable completado) {
+        if (service.actualizar(id,completado)==null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok("Habito completado exitosamente");
+    }
+    @DeleteMapping("/Habitos/eliminar/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Integer id) {
+        HabitoSaludable habitoSaludable=service.obtenerPorId(id).orElse(null);
+        if (habitoSaludable==null){
+            return ResponseEntity.notFound().build();
+        }
+        service.eliminar(id);
+        return ResponseEntity.ok("Habito eliminada");
+    }
+
+    @GetMapping("/Habito/sumaPuntosPorRegistro")
+    public Integer sumaPuntosPorRegistro(Integer idRegistro){
+        return service.sumaPuntosPorRegistro(idRegistro);
+    }
+}
