@@ -1,9 +1,10 @@
-package com.ucr.salud.controller;
+package com.ucr.salud.Controller;
 
 import com.ucr.salud.model.EjercicioRealizado;
 import com.ucr.salud.model.HabitoSaludable;
 import com.ucr.salud.service.HabitoSaludableService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,7 +18,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class HabitosSaludablesController {
-private HabitoSaludableService service;
+    @Autowired
+    private HabitoSaludableService service;
 
     //add
     @PostMapping("/Habitos/add")
@@ -44,7 +46,7 @@ private HabitoSaludableService service;
         return ResponseEntity.ok(habitosSaludables);
     }
 
-    @GetMapping("/Habitos/{id}")
+    @GetMapping("/Habitos/get-by-id/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
         Optional<HabitoSaludable> habitoSaludable = service.obtenerPorId(id);
         if (habitoSaludable.isEmpty()) {
@@ -53,7 +55,7 @@ private HabitoSaludableService service;
         return ResponseEntity.ok(habitoSaludable);
     }
 
-    @GetMapping("/Habitos/{idRegistro}")
+    @GetMapping("/Habitos/registro/{idRegistro}")
     public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
         List<HabitoSaludable> habitoSaludable=service.obtenerPorRegistro(idRegistro);
         if(habitoSaludable.isEmpty()){
@@ -62,7 +64,7 @@ private HabitoSaludableService service;
         return ResponseEntity.ok(habitoSaludable);
     }
 
-    @GetMapping("/Habitos/{idRegistro}")
+    @GetMapping("/Habitos//completado/{idRegistro}")
     public ResponseEntity<List<?>> obtenerCompletadosPorRegistro(@PathVariable Integer idRegistro){
         List<HabitoSaludable> habitoSaludable=service.obtenerCompletadosPorRegistro(idRegistro);
         if(habitoSaludable.isEmpty()){

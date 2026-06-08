@@ -1,4 +1,4 @@
-package com.ucr.salud.controller;
+package com.ucr.salud.Controller;
 
 import com.ucr.salud.model.ComidaConsumida;
 import com.ucr.salud.model.EjercicioRealizado;
@@ -6,6 +6,7 @@ import com.ucr.salud.model.dto.ComidaConsumidaDTO;
 import com.ucr.salud.model.dto.EjercicioRealizadoDTO;
 import com.ucr.salud.service.EjercicioRealizadoService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class EjercicioRealizadoController {
+    @Autowired
     private EjercicioRealizadoService service;
 
     //registro
@@ -46,7 +48,7 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(ejercicioRealizados);
     }
 
-    @GetMapping("/ejercicios/{id}")
+    @GetMapping("/ejercicios/get-by-id/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
         Optional<EjercicioRealizado> ejercicioRealizado = service.obtenerPorId(id);
         if (ejercicioRealizado.isEmpty()) {
@@ -55,7 +57,7 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(ejercicioRealizado);
     }
 
-    @GetMapping("/ejercicios/{idRegistro}")
+    @GetMapping("/ejercicios/registro/{idRegistro}")
     public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
         List<EjercicioRealizado> ejercicioRealizado=service.obtenerPorRegistro(idRegistro);
         if(ejercicioRealizado.isEmpty()){

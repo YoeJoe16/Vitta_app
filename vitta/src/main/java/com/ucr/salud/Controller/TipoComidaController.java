@@ -20,7 +20,7 @@ public class TipoComidaController {
      * Retorna la lista completa de tipos de comida registrados.
      * Si no hay ninguno, responde con 204 No Content.
      */
-    @GetMapping("/api/tipos-comida/all")
+    @GetMapping("/all")
     public ResponseEntity<List<?>> getAll() {
         List<TipoComida> comidas = service.obtenerTodos();
         if (comidas.isEmpty()) {
@@ -33,7 +33,7 @@ public class TipoComidaController {
      * Busca un tipo de comida por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/tipos-comida/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         TipoComida comida = service.obtenerPorId(id).orElse(null);
         if (comida == null) {
@@ -46,7 +46,7 @@ public class TipoComidaController {
      * Busca un tipo de comida por su nombre exacto.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/tipos-comida/nombre/{nombre}")
+    @GetMapping("/nombre/{nombre}")
     public ResponseEntity<?> getByNombre(@PathVariable String nombre) {
         TipoComida comida = service.obtenerPorNombre(nombre).orElse(null);
         if (comida == null) {
@@ -60,7 +60,7 @@ public class TipoComidaController {
      * (por ejemplo: proteína, carbohidrato, grasa).
      * Si no hay resultados, responde con 204 No Content.
      */
-    @GetMapping("/api/tipos-comida/categoria/{categoria}")
+    @GetMapping("/categoria/{categoria}")
     public ResponseEntity<List<?>> getByCategoria(@PathVariable String categoria) {
         List<TipoComida> comidas = service.obtenerPorCategoria(categoria);
         if (comidas.isEmpty()) {
@@ -74,7 +74,7 @@ public class TipoComidaController {
      * (por ejemplo: alto, medio, bajo).
      * Si no hay resultados para ese nivel, responde con 204 No Content.
      */
-    @GetMapping("/api/tipos-comida/nivel-saludable/{nivelSaludable}")
+    @GetMapping("/nivel-saludable/{nivelSaludable}")
     public ResponseEntity<List<?>> getByNivelSaludable(@PathVariable String nivelSaludable) {
         List<TipoComida> comidas = service.obtenerPorNivelSaludable(nivelSaludable);
         if (comidas.isEmpty()) {
@@ -87,7 +87,7 @@ public class TipoComidaController {
      * Crea un nuevo tipo de comida a partir del cuerpo de la solicitud.
      * Si la comida ya existe o faltan campos obligatorios, responde con 400 Bad Request.
      */
-    @PostMapping("/api/tipos-comida/add")
+    @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody TipoComida tipoComida) {
         if (service.crear(tipoComida) == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La comida ya está registrada o faltan campos obligatorios");
@@ -99,7 +99,7 @@ public class TipoComidaController {
      * Actualiza todos los datos de un tipo de comida existente por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @PutMapping("/api/tipos-comida/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody TipoComida datos) {
         if (service.actualizar(id, datos) == null) {
             return ResponseEntity.notFound().build();
@@ -111,7 +111,7 @@ public class TipoComidaController {
      * Elimina un tipo de comida por su ID.
      * Primero verifica que exista; si no, responde con 404 Not Found.
      */
-    @DeleteMapping("/api/tipos-comida/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         TipoComida comida = service.obtenerPorId(id).orElse(null);
         if (comida == null) {

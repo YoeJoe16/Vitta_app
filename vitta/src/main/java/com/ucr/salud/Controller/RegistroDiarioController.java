@@ -21,7 +21,7 @@ public class RegistroDiarioController {
      * Retorna la lista completa de registros diarios almacenados.
      * Si no hay ninguno, responde con 204 No Content.
      */
-    @GetMapping("/api/registros-diarios/all")
+    @GetMapping("/all")
     public ResponseEntity<List<?>> getAll() {
         List<RegistroDiario> registros = service.obtenerTodos();
         if (registros.isEmpty()) {
@@ -34,7 +34,7 @@ public class RegistroDiarioController {
      * Busca un registro diario por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/registros-diarios/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         RegistroDiario registro = service.obtenerPorId(id).orElse(null);
         if (registro == null) {
@@ -47,7 +47,7 @@ public class RegistroDiarioController {
      * Retorna todos los registros diarios asociados a un usuario específico.
      * Si el usuario no tiene registros, responde con 204 No Content.
      */
-    @GetMapping("/api/registros-diarios/usuario/{idUsuario}")
+    @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<?>> getByUsuario(@PathVariable Integer idUsuario) {
         List<RegistroDiario> registros = service.obtenerPorUsuario(idUsuario);
         if (registros.isEmpty()) {
@@ -61,7 +61,7 @@ public class RegistroDiarioController {
      * Útil para verificar si ya existe un registro para ese día.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/registros-diarios/usuario/{idUsuario}/fecha/{fecha}")
+    @GetMapping("/usuario/{idUsuario}/fecha/{fecha}")
     public ResponseEntity<?> getByUsuarioYFecha(
             @PathVariable Integer idUsuario,
             @PathVariable String fecha) {
@@ -77,7 +77,7 @@ public class RegistroDiarioController {
      * Si ya existe un registro para ese día o faltan campos obligatorios,
      * responde con 400 Bad Request.
      */
-    @PostMapping("/api/registros-diarios/add")
+    @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody RegistroDiarioDTO dto) {
         RegistroDiario nuevo = service.add(dto);
         if (nuevo == null) {
@@ -90,7 +90,7 @@ public class RegistroDiarioController {
      * Actualiza todos los datos de un registro diario existente por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @PutMapping("/api/registros-diarios/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody RegistroDiario datos) {
         if (service.actualizar(id, datos) == null) {
             return ResponseEntity.notFound().build();
@@ -103,7 +103,7 @@ public class RegistroDiarioController {
      * tomando en cuenta los ejercicios y comidas registradas en ese día.
      * Si el registro no existe, responde con 404 Not Found.
      */
-    @PatchMapping("/api/registros-diarios/recalcular/{id}")
+    @PatchMapping("/recalcular/{id}")
     public ResponseEntity<?> recalcularPuntos(@PathVariable Integer id) {
         if (service.recalcularPuntos(id) == null) {
             return ResponseEntity.notFound().build();
@@ -115,7 +115,7 @@ public class RegistroDiarioController {
      * Elimina un registro diario por su ID.
      * Primero verifica que exista; si no, responde con 404 Not Found.
      */
-    @DeleteMapping("/api/registros-diarios/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         RegistroDiario registro = service.obtenerPorId(id).orElse(null);
         if (registro == null) {

@@ -20,7 +20,7 @@ public class RangoController {
      * Retorna la lista completa de rangos registrados en el sistema.
      * Si no hay ninguno, responde con 204 No Content.
      */
-    @GetMapping("/api/rangos/all")
+    @GetMapping("/all")
     public ResponseEntity<List<?>> getAll() {
         List<Rango> rangos = service.obtenerTodos();
         if (rangos.isEmpty()) {
@@ -33,7 +33,7 @@ public class RangoController {
      * Busca un rango por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/rangos/{id}")
+    @GetMapping("get-by-id/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         Rango rango = service.obtenerPorId(id).orElse(null);
         if (rango == null) {
@@ -46,7 +46,7 @@ public class RangoController {
      * Busca un rango por su nombre exacto (por ejemplo: "Bronce", "Plata", "Oro").
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/rangos/nombre/{nombre}")
+    @GetMapping("/nombre/{nombre}")
     public ResponseEntity<?> getByNombre(@PathVariable String nombre) {
         Rango rango = service.obtenerPorNombre(nombre).orElse(null);
         if (rango == null) {
@@ -60,7 +60,7 @@ public class RangoController {
      * Útil para determinar en qué rango se encuentra un usuario según sus puntos acumulados.
      * Si no existe un rango para esa cantidad, responde con 404 Not Found.
      */
-    @GetMapping("/api/rangos/puntos/{puntos}")
+    @GetMapping("/puntos/{puntos}")
     public ResponseEntity<?> getByPuntos(@PathVariable Integer puntos) {
         Rango rango = service.obtenerPorPuntos(puntos).orElse(null);
         if (rango == null) {
@@ -73,7 +73,7 @@ public class RangoController {
      * Crea un nuevo rango a partir del cuerpo de la solicitud.
      * Si el rango ya existe o faltan campos obligatorios, responde con 400 Bad Request.
      */
-    @PostMapping("/api/rangos/add")
+    @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody Rango rango) {
         if (service.crear(rango) == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El rango ya está registrado o faltan campos obligatorios");
@@ -85,7 +85,7 @@ public class RangoController {
      * Actualiza todos los datos de un rango existente por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @PutMapping("/api/rangos/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody Rango datos) {
         if (service.actualizar(id, datos) == null) {
             return ResponseEntity.notFound().build();
@@ -97,7 +97,7 @@ public class RangoController {
      * Elimina un rango por su ID.
      * Primero verifica que exista; si no, responde con 404 Not Found.
      */
-    @DeleteMapping("/api/rangos/{id}")
+    @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         Rango rango = service.obtenerPorId(id).orElse(null);
         if (rango == null) {

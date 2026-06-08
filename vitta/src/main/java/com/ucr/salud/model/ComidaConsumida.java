@@ -3,7 +3,7 @@ package com.ucr.salud.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table (name = "tb-comidaConsumida")
+@Table (name = "tb_comida_consumida")
 public class ComidaConsumida {
 
     @Id

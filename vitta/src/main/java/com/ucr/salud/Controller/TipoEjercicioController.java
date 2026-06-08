@@ -20,7 +20,7 @@ public class TipoEjercicioController {
      * Retorna la lista completa de tipos de ejercicio registrados.
      * Si no hay ninguno, responde con 204 No Content.
      */
-    @GetMapping("/api/tipos-ejercicio/all")
+    @GetMapping("/all")
     public ResponseEntity<List<?>> getAll() {
         List<TipoEjercicio> ejercicios = service.obtenerTodos();
         if (ejercicios.isEmpty()) {
@@ -33,7 +33,7 @@ public class TipoEjercicioController {
      * Busca un tipo de ejercicio por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/tipos-ejercicio/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         TipoEjercicio ejercicio = service.obtenerPorId(id).orElse(null);
         if (ejercicio == null) {
@@ -46,7 +46,7 @@ public class TipoEjercicioController {
      * Busca un tipo de ejercicio por su nombre exacto.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/tipos-ejercicio/nombre/{nombre}")
+    @GetMapping("/nombre/{nombre}")
     public ResponseEntity<?> getByNombre(@PathVariable String nombre) {
         TipoEjercicio ejercicio = service.obtenerPorNombre(nombre).orElse(null);
         if (ejercicio == null) {
@@ -59,7 +59,7 @@ public class TipoEjercicioController {
      * Retorna todos los tipos de ejercicio que pertenecen a una categoría dada.
      * Si no hay resultados para esa categoría, responde con 204 No Content.
      */
-    @GetMapping("/api/tipos-ejercicio/categoria/{categoria}")
+    @GetMapping("/categoria/{categoria}")
     public ResponseEntity<List<?>> getByCategoria(@PathVariable String categoria) {
         List<TipoEjercicio> ejercicios = service.obtenerPorCategoria(categoria);
         if (ejercicios.isEmpty()) {
@@ -72,7 +72,7 @@ public class TipoEjercicioController {
      * Crea un nuevo tipo de ejercicio a partir del cuerpo de la solicitud.
      * Si el ejercicio ya existe o faltan campos obligatorios, responde con 400 Bad Request.
      */
-    @PostMapping("/api/tipos-ejercicio/add")
+    @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody TipoEjercicio tipoEjercicio) {
         if (service.crear(tipoEjercicio) == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El ejercicio ya está registrado o faltan campos obligatorios");
@@ -84,7 +84,7 @@ public class TipoEjercicioController {
      * Actualiza todos los datos de un tipo de ejercicio existente por su ID.
      * Si el tipo de ejercicio no existe, responde con 404 Not Found.
      */
-    @PutMapping("/api/tipos-ejercicio/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody TipoEjercicio datos) {
         if (service.actualizar(id, datos) == null) {
             return ResponseEntity.notFound().build();
@@ -96,7 +96,7 @@ public class TipoEjercicioController {
      * Elimina un tipo de ejercicio por su ID.
      * Primero verifica que exista; si no, responde con 404 Not Found.
      */
-    @DeleteMapping("/api/tipos-ejercicio/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         TipoEjercicio ejercicio = service.obtenerPorId(id).orElse(null);
         if (ejercicio == null) {

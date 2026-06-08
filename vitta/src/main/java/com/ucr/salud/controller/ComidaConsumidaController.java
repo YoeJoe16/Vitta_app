@@ -1,9 +1,10 @@
-package com.ucr.salud.controller;
+package com.ucr.salud.Controller;
 
 import com.ucr.salud.model.ComidaConsumida;
 import com.ucr.salud.model.dto.ComidaConsumidaDTO;
 import com.ucr.salud.service.ComidaConsumidaService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,9 +19,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class ComidaConsumidaController {
+    @Autowired
     private ComidaConsumidaService service;
 
-    @GetMapping("/comidas/all")
+    @GetMapping("comidas/all")
     public ResponseEntity<List<?>> obtenerTodas(){
         List<ComidaConsumida> comidaConsumidas=service.obtenerTodas();
         if(comidaConsumidas.isEmpty()){
@@ -29,7 +31,7 @@ public class ComidaConsumidaController {
         return ResponseEntity.ok(comidaConsumidas);
     }
 
-    @GetMapping("/comidas/{id}")
+    @GetMapping("/comidas/get-by-id/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
         Optional<ComidaConsumida> comidaConsumida = service.obtenerPorId(id);
         if (comidaConsumida.isEmpty()) {
@@ -37,7 +39,7 @@ public class ComidaConsumidaController {
         }
         return ResponseEntity.ok(comidaConsumida);
     }
-    @GetMapping("/comidas/{idRegistro}")
+    @GetMapping("/comidas/registro/{idRegistro}")
     public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
         List<ComidaConsumida> comidaConsumidas=service.obtenerPorRegistro(idRegistro);
         if(comidaConsumidas.isEmpty()){
@@ -55,18 +57,45 @@ public class ComidaConsumidaController {
         return ResponseEntity.ok(comidaConsumidas);
     }
 
-    @PostMapping("/comidas/add")
+//    @PostMapping("/comidas/add")
+//    public ResponseEntity<?> registrar(@Valid @RequestBody ComidaConsumidaDTO comidaConsumida , BindingResult result){
+//        if(result.hasErrors()){
+//            List<String> errors =new ArrayList<>();
+//            for (ObjectError error: result.getAllErrors()){
+//                errors.add(error.getDefaultMessage());
+//            }
+//            return ResponseEntity.badRequest().body(errors);
+//        }
+//        if (service.registrar(comidaConsumida)==null){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ya esta registrado el id o no cumple los campos obligatorios");
+//        }
+//        return ResponseEntity.ok("Comida registrada exitosamente");
+//    }
+
+    @PostMapping("/comidas/add") // O "/add" si usas la versión simplificada
     public ResponseEntity<?> registrar(@Valid @RequestBody ComidaConsumidaDTO comidaConsumida , BindingResult result){
+        System.out.println("===> ¡ENTRÓ AL CONTROLADOR ENTRANDO JSON!"); // 👈 PRUEBA 1
+
         if(result.hasErrors()){
-            List<String> errors =new ArrayList<>();
+            System.out.println("===> El DTO tiene errores de validación");
+            List<String> errors = new ArrayList<>();
             for (ObjectError error: result.getAllErrors()){
                 errors.add(error.getDefaultMessage());
             }
             return ResponseEntity.badRequest().body(errors);
         }
-        if (service.registrar(comidaConsumida)==null){
+
+        System.out.println("===> Pasó las validaciones del DTO. Llamando al servicio..."); // 👈 PRUEBA 2
+
+        var resultadoService = service.registrar(comidaConsumida);
+
+        System.out.println("===> El servicio respondió. Resultado es null?: " + (resultadoService == null)); // 👈 PRUEBA 3
+
+        if (resultadoService == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ya esta registrado el id o no cumple los campos obligatorios");
         }
+
+        System.out.println("===> Todo bien, enviando respuesta exitosa"); // 👈 PRUEBA 4
         return ResponseEntity.ok("Comida registrada exitosamente");
     }
 

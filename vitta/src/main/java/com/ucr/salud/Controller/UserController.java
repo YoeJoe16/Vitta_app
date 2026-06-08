@@ -25,7 +25,7 @@ public class UserController {
      * Retorna la lista completa de usuarios registrados.
      * Si no hay usuarios, responde con 204 No Content.
      */
-    @GetMapping("/api/usuarios/all")
+    @GetMapping("/all")
     public ResponseEntity<List<?>> getAll() {
         List<User> users = service.obtenerTodos();
         if (users.isEmpty()) {
@@ -38,7 +38,7 @@ public class UserController {
      * Busca un usuario por su ID.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/usuarios/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         User user = service.obtenerPorId(id).orElse(null);
         if (user == null) {
@@ -51,7 +51,7 @@ public class UserController {
      * Busca un usuario por su correo electrónico.
      * Si no existe, responde con 404 Not Found.
      */
-    @GetMapping("/api/usuarios/email/{email}")
+    @GetMapping("/email/{email}")
     public ResponseEntity<?> getByEmail(@PathVariable String email) {
         User user = service.obtenerPorEmail(email).orElse(null);
         if (user == null) {
@@ -65,7 +65,7 @@ public class UserController {
      * Si hay errores de validación, retorna 400 con la lista de mensajes de error.
      * Si el correo ya está en uso o faltan campos, retorna 400 con mensaje descriptivo.
      */
-    @PostMapping("/api/usuarios/email/{email}")
+    @PostMapping("/add/{email}")
     public ResponseEntity<?> add(@Valid @RequestBody UserDTO dto, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>();
@@ -86,7 +86,7 @@ public class UserController {
      * Actualiza todos los datos de un usuario existente por su ID.
      * Si el usuario no existe, responde con 404 Not Found.
      */
-    @PutMapping("/api/usuarios/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody User datos) {
         if (service.actualizar(id, datos) == null) {
             return ResponseEntity.notFound().build();
@@ -99,7 +99,7 @@ public class UserController {
      * Recibe la cantidad de puntos como parámetro de consulta.
      * Si el usuario no existe, responde con 404 Not Found.
      */
-    @PatchMapping("/api/usuarios/change/{id}?puntos={cantidad}")
+    @PatchMapping("/change/{id}?puntos={cantidad}")
     public ResponseEntity<?> agregarPuntos(@PathVariable Integer id, @RequestParam Integer puntos) {
         User actualizado = service.agregarPuntos(id, puntos);
         if (actualizado == null) {
@@ -112,7 +112,7 @@ public class UserController {
      * Elimina un usuario por su ID.
      * Primero verifica que exista; si no, responde con 404 Not Found.
      */
-    @DeleteMapping("/api/usuarios/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         User user = service.obtenerPorId(id).orElse(null);
         if (user == null) {
@@ -126,7 +126,7 @@ public class UserController {
      * Verifica si ya existe un usuario registrado con el correo indicado.
      * Retorna true o false según el resultado.
      */
-    @GetMapping("/api/usuarios/existe/{email}")
+    @GetMapping("/existe/{email}")
     public ResponseEntity<?> existePorEmail(@PathVariable String email) {
         return ResponseEntity.ok(service.existePorEmail(email));
     }

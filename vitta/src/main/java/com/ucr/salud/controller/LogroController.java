@@ -1,10 +1,11 @@
-package com.ucr.salud.controller;
+package com.ucr.salud.Controller;
 
 import com.ucr.salud.model.Logro;
 import com.ucr.salud.model.LogroUsuario;
 import com.ucr.salud.model.User;
 import com.ucr.salud.service.LogroService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class LogroController {
+    @Autowired
     private LogroService service;
 
     @GetMapping("/Logros")
@@ -29,7 +31,7 @@ public class LogroController {
         return ResponseEntity.ok(Logros);
     }
 
-    @GetMapping("/Logros/{id}")
+    @GetMapping("/Logros/get-by-id{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
         Optional<Logro> logro = service.obtenerPorId(id);
         if (logro.isEmpty()) {
@@ -61,7 +63,7 @@ public class LogroController {
         return ResponseEntity.ok("logro registrada exitosamente");
     }
 
-    @GetMapping("/Logros/{idUsuario}")
+    @GetMapping("/Logros//idUsuario/{idUsuario}")
     public ResponseEntity<List<?>> obtenerLogrosPorUsuario(@PathVariable Integer idUsuario) {
        List<LogroUsuario> logros =service.obtenerLogrosPorUsuario(idUsuario);
         if(logros.isEmpty()){
@@ -78,7 +80,7 @@ public class LogroController {
         return ResponseEntity.ok("Logro actualizado exitosamente");
     }
 
-    @DeleteMapping("/Habitos/eliminar/{id}")
+    @DeleteMapping("/Logros/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         Logro logro=service.obtenerPorId(id).orElse(null);
         if (logro==null){
@@ -99,7 +101,7 @@ public class LogroController {
         return logro;
     }
 
-    @GetMapping("/Logros/otorgarLogro/{idUsuario}/{idLogro}")
+    @GetMapping("/Logros/usuarioLogro/{idUsuario}/{idLogro}")
     public boolean usuarioTieneLogro(@PathVariable Integer idUsuario, @PathVariable Integer idLogro) {
         boolean logro = service.usuarioTieneLogro(idUsuario, idLogro);
         return logro;
