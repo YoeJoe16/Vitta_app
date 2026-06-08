@@ -2,11 +2,14 @@ package com.ucr.salud.service;
 
 import com.ucr.salud.model.EjercicioRealizado;
 import com.ucr.salud.model.TipoEjercicio;
+import com.ucr.salud.model.dto.EjercicioRealizadoDTO;
 import com.ucr.salud.repository.EjercicioRealizadoRepository;
 import com.ucr.salud.repository.RegistroDiarioRepository;
 import com.ucr.salud.repository.TipoEjercicioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,22 +50,27 @@ public class EjercicioRealizadoService {
     }
 
     // Registrar un ejercicio; puntos = puntosPorMinuto * minutos
-    public EjercicioRealizado registrar(EjercicioRealizado ejercicio) {
-        if (!registroDiarioRepository.existsById(ejercicio.getIdRegistro())) {
-            throw new RuntimeException("Registro diario no encontrado con id: " + ejercicio.getIdRegistro());
+    public EjercicioRealizado registrar(EjercicioRealizadoDTO dto) {
+        if (!registroDiarioRepository.existsById(dto.getIdRegistro())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registro no encontrado con id: " + dto.getIdRegistro());
         }
+        TipoEjercicio tipo = tipoEjercicioRepository.findById(dto.getIdTipoEjercicio())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de ejercicio no encontrado con id: " + dto.getIdTipoEjercicio()));
 
-        TipoEjercicio tipo = tipoEjercicioRepository.findById(ejercicio.getIdTipoEjercicio())
-                .orElseThrow(() -> new RuntimeException("TipoEjercicio no encontrado con id: " + ejercicio.getIdTipoEjercicio()));
+        int puntos = tipo.getPuntosPorMinuto() * dto.getMinutos();
 
-        int minutos = ejercicio.getMinutos() != null ? ejercicio.getMinutos() : 0;
-        ejercicio.setPuntosOtorgados(tipo.getPuntosPorMinuto() * minutos);
+        EjercicioRealizado ejercicio = new EjercicioRealizado();
+        ejercicio.setIdRegistro(dto.getIdRegistro());
+        ejercicio.setIdTipoEjercicio(dto.getIdTipoEjercicio());
+        ejercicio.setMinutos(dto.getMinutos());
+        ejercicio.setIntensidad(dto.getIntensidad());
+        ejercicio.setPuntosOtorgados(puntos);
 
         EjercicioRealizado guardado = ejercicioRealizadoRepository.save(ejercicio);
-        registroDiarioService.recalcularPuntos(ejercicio.getIdRegistro());
-
+        registroDiarioService.recalcularPuntos(dto.getIdRegistro());
         return guardado;
     }
+
 
     // Actualizar minutos o intensidad y recalcular puntos
     public EjercicioRealizado actualizar(Integer id, EjercicioRealizado datos) {
