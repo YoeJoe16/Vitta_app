@@ -52,8 +52,8 @@ public class ComidaConsumidaService {
 
     // Registrar una comida consumida; calcula puntos automáticamente
     public ComidaConsumida registrar(ComidaConsumidaDTO dto) {
-        if (!registroDiarioRepository.existsById(dto.getIdRegistro())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registro no encontrado con id: " + dto.getIdRegistro());
+        if (!registroDiarioRepository.existsById(dto.getIdUsuario())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registro no encontrado con id: " + dto.getIdUsuario());
         }
         TipoComida tipo = tipoComidaRepository.findById(dto.getIdTipoComida())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de comida no encontrado con id: " + dto.getIdTipoComida()));
@@ -61,14 +61,14 @@ public class ComidaConsumidaService {
         int puntos = tipo.getPuntosBase() * dto.getCantidadPorciones();
 
         ComidaConsumida comida = new ComidaConsumida();
-        comida.setIdRegistro(dto.getIdRegistro());
+        comida.setIdRegistro(dto.getIdUsuario());
         comida.setIdTipoComida(dto.getIdTipoComida());
         comida.setCantidadPorciones(dto.getCantidadPorciones());
         comida.setMomentoDelDia(dto.getMomentoDelDia());
         comida.setPuntosOtorgados(puntos);
 
         ComidaConsumida guardada = comidaConsumidaRepository.save(comida);
-        registroDiarioService.recalcularPuntos(dto.getIdRegistro());
+        registroDiarioService.recalcularPuntos(dto.getIdUsuario());
         return guardada;
     }
 

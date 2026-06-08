@@ -99,7 +99,7 @@ public class RegistroDiarioService {
 
         int puntosComida    = comidaConsumidaRepository.sumPuntosByIdRegistro(id);
         int puntosEjercicio = ejercicioRealizadoRepository.sumPuntosByIdRegistro(id);
-        int puntosHabito    = habitoSaludableRepository.sumPuntosByIdRegistro(id);
+        int puntosHabito    = habitoSaludableRepository.sumPuntosByIdUsuario(id);
 
         int puntosAnteriores = registro.getPuntosDelDia() != null ? registro.getPuntosDelDia() : 0;
         int nuevoPuntaje     = puntosComida + puntosEjercicio + puntosHabito;

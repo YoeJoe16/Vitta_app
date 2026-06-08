@@ -40,14 +40,14 @@ public class HabitoSaludableService {
     }
 
     // Obtener sólo los hábitos completados de un registro
-    public List<HabitoSaludable> obtenerCompletadosPorRegistro(Integer idRegistro) {
-        return habitoSaludableRepository.findByIdRegistroAndCompletado(idRegistro, true);
+    public List<HabitoSaludable> obtenerCompletadosPorUsuario(Integer idUsuario) {
+        return habitoSaludableRepository.findByIdUsuarioAndCompletado(idUsuario, true);
     }
 
     // Registrar un hábito; asigna puntos si está completado
     public HabitoSaludable registrar(HabitoSaludable habito) {
-        if (!registroDiarioRepository.existsById(habito.getIdRegistro())) {
-            throw new RuntimeException("Registro diario no encontrado con id: " + habito.getIdRegistro());
+        if (!registroDiarioRepository.existsById(habito.getIdUsuario())) {
+            throw new RuntimeException("Registro diario no encontrado con id: " + habito.getIdUsuario());
         }
 
         habito.setPuntosOtorgados(Boolean.TRUE.equals(habito.getCompletado()) ? PUNTOS_POR_HABITO : 0);
@@ -67,7 +67,7 @@ public class HabitoSaludableService {
         habito.setPuntosOtorgados(Boolean.TRUE.equals(completado) ? PUNTOS_POR_HABITO : 0);
 
         HabitoSaludable actualizado = habitoSaludableRepository.save(habito);
-        registroDiarioService.recalcularPuntos(habito.getIdRegistro());
+        registroDiarioService.recalcularPuntos(habito.getIdUsuario());
 
         return actualizado;
     }
@@ -95,13 +95,13 @@ public class HabitoSaludableService {
     public void eliminar(Integer id) {
         HabitoSaludable habito = habitoSaludableRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("HabitoSaludable no encontrado con id: " + id));
-        Integer idRegistro = habito.getIdRegistro();
+        Integer idRegistro = habito.getIdUsuario();
         habitoSaludableRepository.deleteById(id);
         registroDiarioService.recalcularPuntos(idRegistro);
     }
 
     // Suma de puntos de hábitos en un registro
     public Integer sumaPuntosPorRegistro(Integer idRegistro) {
-        return habitoSaludableRepository.sumPuntosByIdRegistro(idRegistro);
+        return habitoSaludableRepository.sumPuntosByIdUsuario(idRegistro);
     }
 }

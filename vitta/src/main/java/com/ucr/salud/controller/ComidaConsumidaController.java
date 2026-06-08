@@ -31,7 +31,7 @@ public class ComidaConsumidaController {
         return ResponseEntity.ok(comidaConsumidas);
     }
 
-    @GetMapping("/comidas/get-by-id/{id}")
+    @GetMapping("/comidas/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
         Optional<ComidaConsumida> comidaConsumida = service.obtenerPorId(id);
         if (comidaConsumida.isEmpty()) {
@@ -39,7 +39,7 @@ public class ComidaConsumidaController {
         }
         return ResponseEntity.ok(comidaConsumida);
     }
-    @GetMapping("/comidas/registro/{idRegistro}")
+    @GetMapping("/comidas/{idUsuario}")
     public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
         List<ComidaConsumida> comidaConsumidas=service.obtenerPorRegistro(idRegistro);
         if(comidaConsumidas.isEmpty()){
@@ -48,7 +48,7 @@ public class ComidaConsumidaController {
         return ResponseEntity.ok(comidaConsumidas);
     }
 
-    @GetMapping("/comidas/{idRegistro}/{momentoDelDia}")
+    @GetMapping("/comidas/{idUsuario}/{momentoDelDia}")
     public ResponseEntity<List<?>> obtenerPorRegistroYMomento(@PathVariable Integer idRegistro,@PathVariable String momentoDelDia){
         List<ComidaConsumida> comidaConsumidas=service.obtenerPorRegistroYMomento(idRegistro,momentoDelDia);
         if(comidaConsumidas.isEmpty()){
@@ -72,9 +72,9 @@ public class ComidaConsumidaController {
 //        return ResponseEntity.ok("Comida registrada exitosamente");
 //    }
 
-    @PostMapping("/comidas/add") // O "/add" si usas la versión simplificada
+    @PostMapping("/comidas/add")
     public ResponseEntity<?> registrar(@Valid @RequestBody ComidaConsumidaDTO comidaConsumida , BindingResult result){
-        System.out.println("===> ¡ENTRÓ AL CONTROLADOR ENTRANDO JSON!"); // 👈 PRUEBA 1
+        System.out.println("===> ¡ENTRÓ AL CONTROLADOR ENTRANDO JSON!");
 
         if(result.hasErrors()){
             System.out.println("===> El DTO tiene errores de validación");
@@ -85,17 +85,17 @@ public class ComidaConsumidaController {
             return ResponseEntity.badRequest().body(errors);
         }
 
-        System.out.println("===> Pasó las validaciones del DTO. Llamando al servicio..."); // 👈 PRUEBA 2
+        System.out.println("===> Pasó las validaciones del DTO. Llamando al servicio...");
 
         var resultadoService = service.registrar(comidaConsumida);
 
-        System.out.println("===> El servicio respondió. Resultado es null?: " + (resultadoService == null)); // 👈 PRUEBA 3
+        System.out.println("===> El servicio respondió. Resultado es null?: " + (resultadoService == null));
 
         if (resultadoService == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ya esta registrado el id o no cumple los campos obligatorios");
         }
 
-        System.out.println("===> Todo bien, enviando respuesta exitosa"); // 👈 PRUEBA 4
+        System.out.println("===> Todo bien, enviando respuesta exitosa");
         return ResponseEntity.ok("Comida registrada exitosamente");
     }
 

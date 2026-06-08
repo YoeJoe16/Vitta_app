@@ -60,7 +60,7 @@ public class EjercicioRealizadoService {
         int puntos = tipo.getPuntosPorMinuto() * dto.getMinutos();
 
         EjercicioRealizado ejercicio = new EjercicioRealizado();
-        ejercicio.setIdRegistro(dto.getIdRegistro());
+        ejercicio.setIdRegistro(dto.getIdUsuario());
         ejercicio.setIdTipoEjercicio(dto.getIdTipoEjercicio());
         ejercicio.setMinutos(dto.getMinutos());
         ejercicio.setIntensidad(dto.getIntensidad());

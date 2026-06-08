@@ -57,7 +57,7 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(ejercicioRealizado);
     }
 
-    @GetMapping("/ejercicios/registro/{idRegistro}")
+    @GetMapping("/ejercicios/registro/{idUsuario}")
     public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
         List<EjercicioRealizado> ejercicioRealizado=service.obtenerPorRegistro(idRegistro);
         if(ejercicioRealizado.isEmpty()){
@@ -66,7 +66,7 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(ejercicioRealizado);
     }
 
-    @GetMapping("/ejercicios/{idRegistro}/{momentoDelDia}")
+    @GetMapping("/ejercicios/{idUsuario}/{momentoDelDia}")
     public ResponseEntity<List<?>> obtenerPorRegistroYIntesidad(@PathVariable Integer idRegistro,@PathVariable String intensidad){
         List<EjercicioRealizado> EjercicioRealizado=service.obtenerPorRegistroEIntensidad(idRegistro,intensidad);
         if(EjercicioRealizado.isEmpty()){

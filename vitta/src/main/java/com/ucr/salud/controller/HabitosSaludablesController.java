@@ -55,18 +55,18 @@ public class HabitosSaludablesController {
         return ResponseEntity.ok(habitoSaludable);
     }
 
-    @GetMapping("/Habitos/registro/{idRegistro}")
-    public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
-        List<HabitoSaludable> habitoSaludable=service.obtenerPorRegistro(idRegistro);
+    @GetMapping("/Habitos/registro/{idUsuario}")
+    public ResponseEntity<List<?>> obtenerPorIDUsario(@PathVariable Integer idUsuario){
+        List<HabitoSaludable> habitoSaludable=service.obtenerPorIdUsario(idUsuario);
         if(habitoSaludable.isEmpty()){
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(habitoSaludable);
     }
 
-    @GetMapping("/Habitos//completado/{idRegistro}")
-    public ResponseEntity<List<?>> obtenerCompletadosPorRegistro(@PathVariable Integer idRegistro){
-        List<HabitoSaludable> habitoSaludable=service.obtenerCompletadosPorRegistro(idRegistro);
+    @GetMapping("/Habitos//completado/{idUsuario}")
+    public ResponseEntity<List<?>> obtenerCompletadosPorUsuario(@PathVariable Integer idUsuario){
+        List<HabitoSaludable> habitoSaludable=service.obtenerCompletadosPorUsuario(idUsuario);
         if(habitoSaludable.isEmpty()){
             return ResponseEntity.noContent().build();
         }
