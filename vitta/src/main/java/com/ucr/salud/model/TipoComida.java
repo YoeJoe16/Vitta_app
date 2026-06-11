@@ -13,16 +13,18 @@ public class TipoComida {
     private String categoria;
     private Integer puntosBase;
     private String nivelSaludable;
+    private Integer idTipoComida;
 
     public TipoComida() {
     }
 
-    public TipoComida(Integer id, String nombre, String categoria, Integer puntosBase, String nivelSaludable) {
+    public TipoComida(Integer id, String nombre, String categoria, Integer puntosBase, String nivelSaludable, Integer idTipoComida) {
         this.id = id;
         this.nombre = nombre;
         this.categoria = categoria;
         this.puntosBase = puntosBase;
         this.nivelSaludable = nivelSaludable;
+        this.idTipoComida = idTipoComida;
     }
 
     public Integer getId() {
@@ -63,5 +65,13 @@ public class TipoComida {
 
     public void setNivelSaludable(String nivelSaludable) {
         this.nivelSaludable = nivelSaludable;
+    }
+
+    public Integer getIdTipoComida() {
+        return idTipoComida;
+    }
+
+    public void setIdTipoComida(Integer idTipoComida) {
+        this.idTipoComida = idTipoComida;
     }
 }

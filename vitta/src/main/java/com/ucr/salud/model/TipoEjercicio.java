@@ -13,11 +13,12 @@ public class TipoEjercicio {
     private String categoria;
     private Integer puntosPorMinuto;
     private String descripcion;
+    private Integer idTipoEjercicio;
 
     public TipoEjercicio() {
     }
 
-    public TipoEjercicio(Integer id, String nombre, String categoria, Integer puntosPorMinuto, String descripcion) {
+    public TipoEjercicio(Integer id, String nombre, String categoria, Integer puntosPorMinuto, String descripcion, Integer idTipoEjercicio) {
         this.id = id;
         this.nombre = nombre;
         this.categoria = categoria;
@@ -63,5 +64,13 @@ public class TipoEjercicio {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public Integer getIdTipoEjercicio() {
+        return idTipoEjercicio;
+    }
+
+    public void setIdTipoEjercicio(Integer idTipoEjercicio) {
+        this.idTipoEjercicio = idTipoEjercicio;
     }
 }

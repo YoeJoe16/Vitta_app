@@ -9,7 +9,7 @@ public class HabitoSaludable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer idRegistro;
+    private Integer idUsuario;
     private String tipoHabito;
     private Boolean completado;
     private Integer puntosOtorgados;
@@ -17,9 +17,9 @@ public class HabitoSaludable {
     public HabitoSaludable() {
     }
 
-    public HabitoSaludable(Integer id, Integer idRegistro, String tipoHabito, Boolean completado, Integer puntosOtorgados) {
+    public HabitoSaludable(Integer id, Integer idUsuario, String tipoHabito, Boolean completado, Integer puntosOtorgados) {
         this.id = id;
-        this.idRegistro = idRegistro;
+        this.idUsuario = idUsuario;
         this.tipoHabito = tipoHabito;
         this.completado = completado;
         this.puntosOtorgados = puntosOtorgados;
@@ -33,12 +33,12 @@ public class HabitoSaludable {
         this.id = id;
     }
 
-    public Integer getIdRegistro() {
-        return idRegistro;
+    public Integer getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setIdRegistro(Integer idRegistro) {
-        this.idRegistro = idRegistro;
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getTipoHabito() {

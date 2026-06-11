@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 public class ComidaConsumidaDTO {
 
     @NotNull(message = "El id del registro no puede ser nulo")
-    private Integer idRegistro;
+    private Integer idUsuario;
 
     @NotNull(message = "El id del tipo de comida no puede ser nulo")
     private Integer idTipoComida;
@@ -22,19 +22,19 @@ public class ComidaConsumidaDTO {
     public ComidaConsumidaDTO() {
     }
 
-    public ComidaConsumidaDTO(Integer idRegistro, Integer idTipoComida, Integer cantidadPorciones, String momentoDelDia) {
-        this.idRegistro = idRegistro;
+    public ComidaConsumidaDTO(Integer idUsuario, Integer idTipoComida, Integer cantidadPorciones, String momentoDelDia) {
+        this.idUsuario = idUsuario;
         this.idTipoComida = idTipoComida;
         this.cantidadPorciones = cantidadPorciones;
         this.momentoDelDia = momentoDelDia;
     }
 
-    public Integer getIdRegistro() {
-        return idRegistro;
+    public Integer getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setIdRegistro(Integer idRegistro) {
-        this.idRegistro = idRegistro;
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public Integer getIdTipoComida() {
