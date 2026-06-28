@@ -57,7 +57,7 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(ejercicioRealizado);
     }
 
-    @GetMapping("/ejercicios/registro/{idUsuario}")
+    @GetMapping("/ejercicios/registro/{idRegistro}")
     public ResponseEntity<List<?>> obtenerPorRegistro(@PathVariable Integer idRegistro){
         List<EjercicioRealizado> ejercicioRealizado=service.obtenerPorRegistro(idRegistro);
         if(ejercicioRealizado.isEmpty()){
@@ -66,8 +66,8 @@ public class EjercicioRealizadoController {
         return ResponseEntity.ok(ejercicioRealizado);
     }
 
-    @GetMapping("/ejercicios/{idUsuario}/{momentoDelDia}")
-    public ResponseEntity<List<?>> obtenerPorRegistroYIntesidad(@PathVariable Integer idRegistro,@PathVariable String intensidad){
+    @GetMapping("/ejercicios/registro/{idRegistro}/{intensidad}")
+    public ResponseEntity<List<?>> obtenerPorRegistroYIntesidad(@PathVariable Integer idRegistro, @PathVariable String intensidad){
         List<EjercicioRealizado> EjercicioRealizado=service.obtenerPorRegistroEIntensidad(idRegistro,intensidad);
         if(EjercicioRealizado.isEmpty()){
             return ResponseEntity.noContent().build();
@@ -80,7 +80,7 @@ public class EjercicioRealizadoController {
         if (service.actualizar(id,ejercicioRealizado)==null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok("Comida actualizado exitosamente");
+        return ResponseEntity.ok("Ejercicio actualizado exitosamente");
     }
 
     @DeleteMapping("/ejercicios/eliminar/{id}")
@@ -90,7 +90,7 @@ public class EjercicioRealizadoController {
             return ResponseEntity.notFound().build();
         }
         service.eliminar(id);
-        return ResponseEntity.ok("Comida eliminada");
+        return ResponseEntity.ok("Ejercicio eliminado");
     }
 
 

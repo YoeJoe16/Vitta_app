@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface HabitoSaludableRepository extends JpaRepository<HabitoSaludable, Integer> {
 
-    // Todos los hábitos de un registro diario
-    List<HabitoSaludable> findByIdRegistro(Integer idRegistro);
+    // Todos los habitos de un registro diario
+    List<HabitoSaludable> findByIdUsuario(Integer idUsuario);
 
-    // Solo los hábitos completados de un registro
-    List<HabitoSaludable> findByIdRegistroAndCompletado(Integer idRegistro, Boolean completado);
+    // Solo los habitos completados de un registro
+    List<HabitoSaludable> findByIdUsuarioAndCompletado(Integer idUsuario, Boolean completado);
 
     // Suma total de puntos otorgados en un registro
-    @Query("SELECT COALESCE(SUM(h.puntosOtorgados), 0) FROM HabitoSaludable h WHERE h.idRegistro = :idRegistro")
-    Integer sumPuntosByIdRegistro(@Param("idRegistro") Integer idRegistro);
+    @Query("SELECT COALESCE(SUM(h.puntosOtorgados), 0) FROM HabitoSaludable h WHERE h.idUsuario = :idUsuario")
+    Integer sumPuntosByIdUsuario(@Param("idUsuario") Integer idUsuario);
 }

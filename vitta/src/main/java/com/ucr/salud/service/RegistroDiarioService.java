@@ -53,19 +53,19 @@ public class RegistroDiarioService {
         return registroDiarioRepository.findByIdUsuarioOrderByFechaDesc(idUsuario);
     }
 
-    // Obtener registro de un usuario por fecha específica
+    // Obtener registro de un usuario por fecha especifica
     public Optional<RegistroDiario> obtenerPorUsuarioYFecha(Integer idUsuario, String fecha) {
         return registroDiarioRepository.findByIdUsuarioAndFecha(idUsuario, fecha);
     }
 
-    // Crear nuevo registro diario (solo uno por usuario por día)
+    // Crear nuevo registro diario (solo uno por usuario por dia)
     public RegistroDiario add(RegistroDiarioDTO dto) {
         if (!userRepository.existsById(dto.getIdUsuario())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado con id: " + dto.getIdUsuario());
         }
         registroDiarioRepository.findByIdUsuarioAndFecha(dto.getIdUsuario(), dto.getFecha())
                 .ifPresent(r -> {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya existe un registro para ese día");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya existe un registro para ese dia");
                 });
 
         RegistroDiario registro = new RegistroDiario();
@@ -91,7 +91,7 @@ public class RegistroDiarioService {
         return registroDiarioRepository.save(registro);
     }
 
-    // Recalcula los puntos del día sumando comidas + ejercicios + hábitos
+    // Recalcula los puntos del dia sumando comidas + ejercicios + habitos
     // y propaga la diferencia al total del usuario
     public RegistroDiario recalcularPuntos(Integer id) {
         RegistroDiario registro = registroDiarioRepository.findById(id)
@@ -99,7 +99,7 @@ public class RegistroDiarioService {
 
         int puntosComida    = comidaConsumidaRepository.sumPuntosByIdRegistro(id);
         int puntosEjercicio = ejercicioRealizadoRepository.sumPuntosByIdRegistro(id);
-        int puntosHabito    = habitoSaludableRepository.sumPuntosByIdUsuario(id);
+        int puntosHabito    = habitoSaludableRepository.sumPuntosByIdUsuario(registro.getIdUsuario());
 
         int puntosAnteriores = registro.getPuntosDelDia() != null ? registro.getPuntosDelDia() : 0;
         int nuevoPuntaje     = puntosComida + puntosEjercicio + puntosHabito;

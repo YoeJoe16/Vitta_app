@@ -14,21 +14,31 @@ public class Logro {
     private String condicion;
     private Integer puntosBonus;
     private String iconoUrl;
+    private Integer idLogro;
 
     public Logro() {
     }
 
-    public Logro(Integer id, String nombre, String descripcion, String condicion, Integer puntosBonus, String iconoUrl) {
+    public Logro(Integer id, String nombre, String descripcion, String condicion, Integer puntosBonus, String iconoUrl, Integer idLogro) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.condicion = condicion;
         this.puntosBonus = puntosBonus;
         this.iconoUrl = iconoUrl;
+        this.idLogro= idLogro;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    public void setIdLogro(Integer idLogro) {
+        this.idLogro = idLogro;
+    }
+
+    public Integer getIdLogro() {
+        return idLogro;
     }
 
     public void setId(Integer id) {
@@ -74,4 +84,6 @@ public class Logro {
     public void setIconoUrl(String iconoUrl) {
         this.iconoUrl = iconoUrl;
     }
+
+
 }

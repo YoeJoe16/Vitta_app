@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 public class EjercicioRealizadoDTO {
 
     @NotNull(message = "El id del registro no puede ser nulo")
-    private Integer idUsuario;
+    private Integer idRegistro;
 
     @NotNull(message = "El id del tipo de ejercicio no puede ser nulo")
     private Integer idTipoEjercicio;
@@ -22,8 +22,8 @@ public class EjercicioRealizadoDTO {
     public EjercicioRealizadoDTO() {
     }
 
-    public EjercicioRealizadoDTO(Integer idUsuario, Integer idTipoEjercicio, Integer minutos, String intensidad) {
-        this.idUsuario = idUsuario;
+    public EjercicioRealizadoDTO(Integer idRegistro, Integer idTipoEjercicio, Integer minutos, String intensidad) {
+        this.idRegistro = idRegistro;
         this.idTipoEjercicio = idTipoEjercicio;
         this.minutos = minutos;
         this.intensidad = intensidad;

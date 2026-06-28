@@ -9,13 +9,13 @@ public class UserDTO {
     @NotBlank(message = "El nombre no puede estar en blanco")
     private String name;
 
-    @Email(message = "El correo no es válido")
+    @Email(message = "El correo no es valido")
     @NotBlank(message = "El correo no puede estar en blanco")
     private String email;
 
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&*!?]).{8,}$",
-            message = "Mínimo 8 caracteres, al menos una mayúscula, una minúscula, " +
-                    "un número y un carácter especial (@#$%^&*!?)")
+            message = "Minimo 8 caracteres, al menos una mayuscula, una minuscula, " +
+                    "un numero y un caracter especial (@#$%^&*!?)")
     private String password;
 
     public UserDTO() {

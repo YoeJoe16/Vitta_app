@@ -31,7 +31,7 @@ public class LogroController {
         return ResponseEntity.ok(Logros);
     }
 
-    @GetMapping("/Logros/get-by-id{id}")
+    @GetMapping("/Logros/get-by-id/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Integer id) {
         Optional<Logro> logro = service.obtenerPorId(id);
         if (logro.isEmpty()) {
@@ -60,10 +60,10 @@ public class LogroController {
         if (service.crear(logro)==null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ya esta registrado el logro");
         }
-        return ResponseEntity.ok("logro registrada exitosamente");
+        return ResponseEntity.ok("Logro registrado exitosamente");
     }
 
-    @GetMapping("/Logros//idUsuario/{idUsuario}")
+    @GetMapping("/Logros/usuario/{idUsuario}")
     public ResponseEntity<List<?>> obtenerLogrosPorUsuario(@PathVariable Integer idUsuario) {
        List<LogroUsuario> logros =service.obtenerLogrosPorUsuario(idUsuario);
         if(logros.isEmpty()){
@@ -87,34 +87,28 @@ public class LogroController {
             return ResponseEntity.notFound().build();
         }
         service.eliminar(id);
-        return ResponseEntity.ok("Habito eliminada");
+        return ResponseEntity.ok("Logro eliminado");
     }
 
     @GetMapping("/Logros/contarLogros/{idUsuario}")
-    public long contarLogrosPorUsuario(@PathVariable Integer idUsuario) {
-        return contarLogrosPorUsuario(idUsuario);
+    public ResponseEntity<?> contarLogrosPorUsuario(@PathVariable Integer idUsuario) {
+        return ResponseEntity.ok(service.contarLogrosPorUsuario(idUsuario));
     }
 
     @GetMapping("/Logros/otorgarLogro/{idUsuario}/{idLogro}")
-    public LogroUsuario otorgarLogro(@PathVariable Integer idUsuario,@PathVariable Integer idLogro) {
-        LogroUsuario logro = service.otorgarLogro(idUsuario, idLogro);
-        return logro;
+    public ResponseEntity<?> otorgarLogro(@PathVariable Integer idUsuario,@PathVariable Integer idLogro) {
+        return ResponseEntity.ok(service.otorgarLogro(idUsuario, idLogro));
     }
 
     @GetMapping("/Logros/usuarioLogro/{idUsuario}/{idLogro}")
-    public boolean usuarioTieneLogro(@PathVariable Integer idUsuario, @PathVariable Integer idLogro) {
-        boolean logro = service.usuarioTieneLogro(idUsuario, idLogro);
-        return logro;
+    public ResponseEntity<?> usuarioTieneLogro(@PathVariable Integer idUsuario, @PathVariable Integer idLogro) {
+        return ResponseEntity.ok(service.usuarioTieneLogro(idUsuario, idLogro));
     }
 
-    @GetMapping("Logros/evaluarLogrosAutomaticos/{idUsuario}")
+    @GetMapping("/Logros/evaluarLogrosAutomaticos/{idUsuario}")
     public ResponseEntity<?> evaluarLogrosAutomaticos(@PathVariable Integer idUsuario) {
-        Logro logro= service.evaluarLogrosAutomaticos(idUsuario);
-        if (logro==null){
-            return ResponseEntity.notFound().build();
-        }
         service.evaluarLogrosAutomaticos(idUsuario);
-        return ResponseEntity.ok("logros evaluados");
+        return ResponseEntity.ok("Logros evaluados exitosamente");
     }
 
 

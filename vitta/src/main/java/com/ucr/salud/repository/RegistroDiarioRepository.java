@@ -16,6 +16,6 @@ public interface RegistroDiarioRepository extends JpaRepository<RegistroDiario, 
     // Alias usado en el service (sin orden)
     List<RegistroDiario> findByIdUsuario(Integer idUsuario);
 
-    // Registro único por usuario y fecha (máximo uno por día)
+    // Registro unico por usuario y fecha (maximo uno por dia)
     Optional<RegistroDiario> findByIdUsuarioAndFecha(Integer idUsuario, String fecha);
 }

@@ -24,6 +24,7 @@ public class TipoEjercicio {
         this.categoria = categoria;
         this.puntosPorMinuto = puntosPorMinuto;
         this.descripcion = descripcion;
+        this.idTipoEjercicio= idTipoEjercicio;
     }
 
     public Integer getId() {

@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitta — Salud y Fitness</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --primary: #00454A; --secondary: #006D77; --accent: #80E0CF; --light: #EDF6F9; --white: #FFFFFF; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--light); color: #1a2a3a; }
+        .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+        .glass-dark { background: rgba(0,69,74,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .card { @apply bg-white rounded-2xl shadow-lg p-6 transition-all duration-300; border: 1px solid rgba(0,0,0,0.04); }
+        .card:hover { @apply shadow-xl; transform: translateY(-2px); }
+        .btn-primary { background: var(--primary); color: white; padding: 0.625rem 1.5rem; border-radius: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-primary:hover { background: var(--secondary); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,69,74,0.3); }
+        .btn-secondary { background: var(--accent); color: var(--primary); padding: 0.625rem 1.5rem; border-radius: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-secondary:hover { opacity: 0.85; transform: translateY(-1px); }
+        .btn-danger { background: #ef4444; color: white; padding: 0.625rem 1.5rem; border-radius: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-danger:hover { background: #dc2626; transform: translateY(-1px); }
+        .input-field { width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; font-size: 0.95rem; transition: all 0.2s; background: white; }
+        .input-field:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(0,109,119,0.15); }
+        .input-error { border-color: #ef4444; }
+        .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; max-width: 24rem; }
+        .toast { padding: 1rem 1.25rem; border-radius: 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.12); animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 0.75rem; font-weight: 500; }
+        .toast-success { background: #059669; color: white; }
+        .toast-error { background: #dc2626; color: white; }
+        .toast-info { background: var(--secondary); color: white; }
+        .toast-warning { background: #d97706; color: white; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .animate-fade { animation: fadeIn 0.3s ease; }
+        .spinner { width: 1.25rem; height: 1.25rem; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block; }
+        .spinner-dark { border-color: rgba(0,0,0,0.1); border-top-color: var(--primary); }
+        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.75rem; color: rgba(255,255,255,0.75); transition: all 0.2s; cursor: pointer; text-decoration: none; font-size: 0.9rem; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,0.12); color: white; }
+        .sidebar-link.active { background: rgba(128,224,207,0.2); color: var(--accent); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: fadeIn 0.2s ease; }
+        .modal-content { background: white; border-radius: 1.5rem; padding: 2rem; max-width: 32rem; width: 100%; max-height: 90vh; overflow-y: auto; animation: fadeIn 0.25s ease; }
+        .stat-card { @apply card flex flex-col items-center justify-center text-center; padding: 1.5rem; }
+        .stat-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .stat-label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem; }
+        .tab-btn { padding: 0.5rem 1.25rem; border-radius: 0.75rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; background: transparent; color: #64748b; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-btn:hover:not(.active) { background: #e2e8f0; }
+        .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .badge-primary { background: rgba(0,109,119,0.12); color: var(--secondary); }
+        .badge-accent { background: rgba(128,224,207,0.2); color: #006d77; }
+        .progress-bar { height: 0.5rem; background: #e2e8f0; border-radius: 9999px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 9999px; background: linear-gradient(90deg, var(--accent), var(--secondary)); transition: width 0.5s ease; }
+        .achievement-card { @apply card flex items-center gap-4; }
+        .achievement-icon { width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { text-align: left; padding: 0.75rem 1rem; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; }
+        tr:hover td { background: #f8fafc; }
+        .empty-state { text-align: center; padding: 3rem 1rem; color: #94a3b8; }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+        .search-box { position: relative; }
+        .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .search-box input { padding-left: 2.75rem; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @media (max-width: 768px) { .sidebar { position: fixed; left: -100%; transition: left 0.3s ease; } .sidebar.open { left: 0; } .modal-content { margin: 0.5rem; padding: 1.25rem; } }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="app"></div>
+
+    <script>
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+        const API_BASE = '';
+        const API = API_BASE + '/api';
+        const STATE = { user: null, token: null, view: 'login', loading: false };
+
+        // ============================================================
+        // TOASTS
+        // ============================================================
+        function toast(message, type = 'info', duration = 3500) {
+            const c = document.getElementById('toast-container');
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle' };
+            const t = document.createElement('div');
+            t.className = 'toast toast-' + type;
+            t.innerHTML = '<i class="fas ' + (icons[type] || icons.info) + '"></i><span>' + message + '</span>';
+            c.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0';
+                t.style.transform = 'translateX(100%)';
+                setTimeout(() => t.remove(), 300); }, duration);
+        }
+
+        // ============================================================
+        // MODAL HELPER
+        // ============================================================
+        function showModal(html) {
+            const m = document.createElement('div');
+            m.className = 'modal-overlay';
+            m.innerHTML = '<div class="modal-content">' + html + '</div>';
+            m.addEventListener('click', function(e) { if (e.target === m) { m.remove(); } });
+            document.body.appendChild(m);
+            return m.querySelector('.modal-content');
+        }
+
+        function closeModal() { const m = document.querySelector('.modal-overlay'); if (m) m.remove(); }
+
+        // ============================================================
+        // API LAYER
+        // ============================================================
+        async function apiRequest(method, path, body, timeoutMs = 15000) {
+            const controller = new AbortController();
+            const timer = setTimeout(function() { controller.abort(); }, timeoutMs);
+            const opts = { method: method, headers: { 'Content-Type': 'application/json' }, signal: controller.signal };
+            if (body) opts.body = JSON.stringify(body);
+            try {
+                const r = await fetch(API + path, opts);
+                clearTimeout(timer);
+                const ct = r.headers.get('content-type') || '';
+                let data;
+                if (ct.includes('json')) { data = await r.json(); } else { data = await r.text(); }
+                if (!r.ok) { throw { status: r.status, message: typeof data === 'string' ? data : (data && data.message) ||
+                            (data && data.detail) || (Array.isArray(data) ? data.join('. ') : JSON.stringify(data)) ||
+                            'Error del servidor', data: data }; }
+                return data;
+            } catch (e) {
+                clearTimeout(timer);
+                if (e && e.status) throw e;
+                if (e && e.name === 'AbortError') throw { status: 0, message: 'La solicitud tard demasiado' };
+                throw { status: 0, message: 'Error de conexin: ' + (e.message || 'sin respuesta') };
+            }
+        }
+
+        const API_Service = {
+            get: function(path) { return apiRequest('GET', path); },
+            post: function(path, body) { return apiRequest('POST', path, body); },
+            put: function(path, body) { return apiRequest('PUT', path, body); },
+            patch: function(path, body) { return apiRequest('PATCH', path, body); },
+            del: function(path) { return apiRequest('DELETE', path); },
+            login: function(email, password) { return this.post('/usuarios/login', { email: email, password: password }); },
+            register: function(data) { return this.post('/usuarios/add', data); }
+        };
+
+        // ============================================================
+        // STATE HELPERS
+        // ============================================================
+        function isLoggedIn() { return !!STATE.user; }
+
+        function requireAuth() { if (!isLoggedIn()) { navigate('login'); return false; } return true; }
+
+        // ============================================================
+        // ROUTER
+        // ============================================================
+        function navigate(view, data) {
+            STATE.view = view;
+            STATE.viewData = data;
+            render();
+        }
+
+        // ============================================================
+        // RENDER ENGINE
+        // ============================================================
+        function render() {
+            const app = document.getElementById('app');
+            if (!isLoggedIn() && STATE.view !== 'login' && STATE.view !== 'register') { STATE.view = 'login'; }
+            if (!isLoggedIn()) {
+                app.innerHTML = renderAuth();
+                afterRenderAuth();
+                return;
+            }
+            app.innerHTML = renderAppShell();
+            afterRenderShell();
+        }
+
+        // ============================================================
+        // AUTH VIEWS
+        // ============================================================
+        function renderAuth() {
+            var isLogin = STATE.view === 'login' || !STATE.view;
+            return `
+            <div class="min-h-screen flex items-center justify-center p-4" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);">
+              <div class="glass rounded-3xl p-8 w-full max-w-md shadow-2xl animate-fade">
+                <div class="text-center mb-8">
+                  <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: var(--accent);">
+                    <i class="fas fa-leaf text-2xl" style="color: var(--primary);"></i>
+                  </div>
+                  <h1 class="text-3xl font-extrabold" style="color: var(--primary);">Vitta</h1>
+                  <p class="text-sm mt-1" style="color: #64748b;">${isLogin ? 'Inicia sesion para continuar' : 'Crea tu cuenta gratuita'}</p>
+                </div>
+                <div id="auth-form">
+                  ${isLogin ? renderLoginForm() : renderRegisterForm()}
+                </div>
+                <div class="text-center mt-6 text-sm" style="color: #64748b;">
+                  ${isLogin ? 'No tienes cuenta? <a href="#" class="font-semibold" style="color: var(--secondary);" onclick="navigate(\'register\')">Registrate</a>'
+                            : 'Ya tienes cuenta? <a href="#" class="font-semibold" style="color: var(--secondary);" onclick="navigate(\'login\')">Inicia sesion</a>'}
+                </div>
+              </div>
+            </div>`;
+        }
+
+        function renderLoginForm() {
+            return `
+            <form id="login-form" onsubmit="handleLogin(event)" novalidate>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color: var(--primary);">Correo electronico</label>
+                <input type="email" name="email" class="input-field" placeholder="tu@correo.com" required>
+              </div>
+              <div class="mb-6">
+                <label class="block text-sm font-semibold mb-1.5" style="color: var(--primary);">Contrasena</label>
+                <input type="password" name="password" class="input-field" placeholder="••••••••" required minlength="8">
+              </div>
+              <button type="submit" class="btn-primary w-full flex items-center justify-center gap-2" id="login-btn">
+                <span id="login-text">Iniciar sesion</span>
+                <span id="login-spinner" class="hidden"><span class="spinner"></span></span>
+              </button>
+            </form>`;
+        }
+
+        function renderRegisterForm() {
+            return `
+            <form id="register-form" onsubmit="handleRegister(event)" novalidate>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color: var(--primary);">Nombre completo</label>
+                <input type="text" name="name" class="input-field" placeholder="Tu nombre" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color: var(--primary);">Correo electronico</label>
+                <input type="email" name="email" class="input-field" placeholder="tu@correo.com" required>
+              </div>
+              <div class="mb-6">
+                <label class="block text-sm font-semibold mb-1.5" style="color: var(--primary);">Contrasena</label>
+                <input type="password" name="password" class="input-field" placeholder="Min. 8 caracteres, mayuscula, minuscula, numero y simbolo" required minlength="8">
+                <p class="text-xs mt-1" style="color: #94a3b8;">Minimo 8 caracteres, mayuscula, minuscula, numero y simbolo (@#$%^&*!?)</p>
+              </div>
+              <button type="submit" class="btn-primary w-full flex items-center justify-center gap-2" id="register-btn">
+                <span id="register-text">Crear cuenta</span>
+                <span id="register-spinner" class="hidden"><span class="spinner"></span></span>
+              </button>
+            </form>`;
+        }
+
+        function afterRenderAuth() { /* nothing extra needed */ }
+
+        // ============================================================
+        // AUTH HANDLERS
+        // ============================================================
+        async function handleLogin(e) {
+            e.preventDefault();
+            var form = e.target;
+            var fd = new FormData(form);
+            var btn = document.getElementById('login-btn');
+            var txt = document.getElementById('login-text');
+            var spin = document.getElementById('login-spinner');
+            btn.disabled = true;
+            txt.textContent = 'Iniciando...';
+            spin.classList.remove('hidden');
+            try {
+                var user = await API_Service.login(fd.get('email'), fd.get('password'));
+                STATE.user = user;
+                toast('Bienvenido de vuelta, ' + user.name + '!', 'success');
+                navigate('dashboard');
+            } catch (e) {
+                toast(e.message || 'Credenciales invlidas', 'error');
+            } finally {
+                btn.disabled = false;
+                txt.textContent = 'Iniciar sesion';
+                spin.classList.add('hidden');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            var form = e.target;
+            var fd = new FormData(form);
+            var btn = document.getElementById('register-btn');
+            var txt = document.getElementById('register-text');
+            var spin = document.getElementById('register-spinner');
+            btn.disabled = true;
+            txt.textContent = 'Creando...';
+            spin.classList.remove('hidden');
+            try {
+                await API_Service.register({ name: fd.get('name'), email: fd.get('email'), password: fd.get('password') });
+                toast('Cuenta creada exitosamente. Inicia sesion.', 'success');
+                navigate('login');
+            } catch (e) {
+                var msg = e.message || 'Error al registrar';
+                if (e.data && Array.isArray(e.data)) msg = e.data.join('. ');
+                toast(msg, 'error');
+            } finally {
+                btn.disabled = false;
+                txt.textContent = 'Crear cuenta';
+                spin.classList.add('hidden');
+            }
+        }
+
+        // ============================================================
+        // APP SHELL
+        // ============================================================
+        function renderAppShell() {
+            var u = STATE.user || {};
+            var active = STATE.view;
+            var nav = [
+                { id: 'dashboard', icon: 'fa-chart-pie', label: 'Dashboard' },
+                { id: 'registros', icon: 'fa-calendar-day', label: 'Registros' },
+                { id: 'comidas', icon: 'fa-utensils', label: 'Nutricin' },
+                { id: 'ejercicios', icon: 'fa-dumbbell', label: 'Ejercicios' },
+                { id: 'habitos', icon: 'fa-check-double', label: 'Hbitos' },
+                { id: 'logros', icon: 'fa-trophy', label: 'Logros' },
+                { id: 'perfil', icon: 'fa-user-circle', label: 'Perfil' },
+                { id: 'reportes', icon: 'fa-chart-line', label: 'Reportes' },
+                { id: 'catalogos', icon: 'fa-book', label: 'Catlogos' },
+            ];
+            return `
+            <div class="min-h-screen flex">
+              <!-- Sidebar -->
+              <aside class="sidebar w-64 flex-shrink-0 min-h-screen flex flex-col z-50" style="background: var(--primary);" id="sidebar">
+                <div class="p-5 flex items-center gap-3 border-b border-white/10">
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: var(--accent);">
+                    <i class="fas fa-leaf" style="color: var(--primary);"></i>
+                  </div>
+                  <div>
+                    <div class="text-white font-bold text-lg">Vitta</div>
+                    <div class="text-xs" style="color: var(--accent);">${u.range || 'Sin rango'}</div>
+                  </div>
+                </div>
+                <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+                  ${nav.map(function(n) {
+                    return '<a class="sidebar-link ' + (active === n.id ? 'active' : '') + '" onclick="navigate(\'' + n.id + '\')">' +
+                      '<i class="fas ' + n.icon + ' w-5 text-center"></i>' +
+                      '<span>' + n.label + '</span></a>';
+                  }).join('')}
+                </nav>
+                <div class="p-3 border-t border-white/10">
+                  <a class="sidebar-link" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt w-5 text-center"></i><span>Cerrar sesion</span>
+                  </a>
+                </div>
+              </aside>
+
+              <!-- Mobile overlay -->
+              <div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-40 hidden" onclick="toggleSidebar()"></div>
+
+              <!-- Main -->
+              <main class="flex-1 flex flex-col min-h-screen">
+                <!-- Top bar -->
+                <header class="glass sticky top-0 z-30 px-4 md:px-8 py-3 flex items-center justify-between border-b border-white/20">
+                  <div class="flex items-center gap-3">
+                    <button class="md:hidden text-xl" style="color: var(--primary);" onclick="toggleSidebar()">
+                      <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="text-lg font-bold" style="color: var(--primary);" id="view-title">${getViewTitle()}</h2>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <div class="badge badge-accent hidden sm:flex">
+                      <i class="fas fa-star"></i>
+                      <span>${u.totalPoints || 0} pts</span>
+                    </div>
+                    <span class="text-sm font-medium hidden sm:block" style="color: var(--primary);">${u.name || ''}</span>
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background: var(--secondary);">
+                      ${(u.name || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  </div>
+                </header>
+
+                <!-- Content -->
+                <div class="flex-1 p-4 md:p-8 overflow-y-auto" id="view-content">
+                  ${renderView()}
+                </div>
+              </main>
+            </div>`;
+        }
+
+        function afterRenderShell() {
+            /* after render hook */
+            document.getElementById('view-title').textContent = getViewTitle();
+        }
+
+        function getViewTitle() {
+            var titles = {
+                dashboard: 'Dashboard',
+                registros: 'Registro Diario',
+                comidas: 'Nutricin',
+                ejercicios: 'Ejercicios',
+                habitos: 'Hbitos Saludables',
+                logros: 'Logros',
+                perfil: 'Mi Perfil',
+                reportes: 'Reportes',
+                catalogos: 'Catlogos',
+                config: 'Configuracin'
+            };
+            return titles[STATE.view] || 'Vitta';
+        }
+
+        function toggleSidebar() {
+            var s = document.getElementById('sidebar');
+            var o = document.getElementById('sidebar-overlay');
+            if (!s) return;
+            s.classList.toggle('open');
+            if (o) o.classList.toggle('hidden');
+        }
+
+        function handleLogout() {
+            STATE.user = null;
+            toast('Sesin cerrada', 'info');
+            navigate('login');
+        }
+
+        // ============================================================
+        // VIEW RENDERER
+        // ============================================================
+        function renderView() {
+            if (!STATE.user) return '<div class="text-center py-12">Redirigiendo...</div>';
+            switch (STATE.view) {
+                case 'dashboard':
+                    return renderDashboard();
+                case 'registros':
+                    return renderRegistros();
+                case 'comidas':
+                    return renderComidas();
+                case 'ejercicios':
+                    return renderEjercicios();
+                case 'habitos':
+                    return renderHabitos();
+                case 'logros':
+                    return renderLogros();
+                case 'perfil':
+                    return renderPerfil();
+                case 'reportes':
+                    return renderReportes();
+                case 'catalogos':
+                    return renderCatalogos();
+                default:
+                    return renderDashboard();
+            }
+        }
+
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        function renderDashboard() {
+            var u = STATE.user || {};
+            var puntos = u.totalPoints || 0;
+            var nivel = Math.floor(puntos / 500) + 1;
+            var xpProgreso = (puntos % 500) / 500 * 100;
+            var rango = u.range || 'Bronce';
+            return `
+            <div class="animate-fade space-y-6">
+              <!-- Hero -->
+              <div class="rounded-2xl p-6 md:p-8 text-white" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <h2 class="text-2xl font-bold">Hola, ${u.name || 'Usuario'}!</h2>
+                    <p class="opacity-80 mt-1">Rango: <strong>${rango}</strong></p>
+                  </div>
+                  <div class="flex items-center gap-6">
+                    <div class="text-center">
+                      <div class="text-3xl font-extrabold">${puntos}</div>
+                      <div class="text-xs opacity-75">Puntos totales</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-3xl font-extrabold">${nivel}</div>
+                      <div class="text-xs opacity-75">Nivel</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <div class="flex justify-between text-sm mb-1">
+                    <span>Progreso nivel ${nivel}</span>
+                    <span>${puntos % 500} / 500 XP</span>
+                  </div>
+                  <div class="progress-bar" style="background: rgba(255,255,255,0.2);">
+                    <div class="progress-fill" style="width:${Math.min(xpProgreso,100)}%;background:var(--accent);"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dash-stats">
+                <div class="stat-card"><i class="fas fa-trophy text-2xl mb-2" style="color:var(--secondary);"></i><div class="stat-value" id="dash-logros">-</div><div class="stat-label">Logros</div></div>
+                <div class="stat-card"><i class="fas fa-calendar-check text-2xl mb-2" style="color:var(--secondary);"></i><div class="stat-value" id="dash-registros">-</div><div class="stat-label">Registros</div></div>
+                <div class="stat-card"><i class="fas fa-fire text-2xl mb-2" style="color:var(--secondary);"></i><div class="stat-value" id="dash-racha">0</div><div class="stat-label">Racha (das)</div></div>
+                <div class="stat-card"><i class="fas fa-medal text-2xl mb-2" style="color:var(--secondary);"></i><div class="stat-value" id="dash-rango">${rango}</div><div class="stat-label">Rango actual</div></div>
+              </div>
+
+              <!-- Achievements preview -->
+              <div class="card">
+                <h3 class="font-bold text-lg mb-4" style="color:var(--primary);"><i class="fas fa-trophy mr-2" style="color:var(--secondary);"></i>Logros recientes</h3>
+                <div id="dash-logros-list" class="space-y-3"></div>
+              </div>
+            </div>`;
+        }
+
+        async function afterRenderShell() {
+            document.getElementById('view-title').textContent = getViewTitle();
+            if (STATE.view === 'dashboard' && STATE.user) { loadDashboardData(); }
+            if (STATE.view === 'registros' && STATE.user) { loadRegistros(); }
+            if (STATE.view === 'comidas' && STATE.user) { loadComidas(); }
+            if (STATE.view === 'ejercicios' && STATE.user) { loadEjercicios(); }
+            if (STATE.view === 'habitos' && STATE.user) { loadHabitos(); }
+            if (STATE.view === 'logros' && STATE.user) { loadLogrosView(); }
+            if (STATE.view === 'perfil' && STATE.user) { loadPerfil(); }
+            if (STATE.view === 'reportes' && STATE.user) { loadReportes(); }
+            if (STATE.view === 'catalogos' && STATE.user) { loadCatalogos(); }
+        }
+
+        async function loadDashboardData() {
+            var uid = STATE.user.id;
+            try {
+                var registros = await API_Service.get('/registros-diarios/usuario/' + uid);
+                var el = document.getElementById('dash-registros');
+                if (el) el.textContent = registros.length;
+                var racha = 0;
+                if (registros.length > 0) {
+                    var sorted = registros.slice().sort(function(a, b) { return b.fecha > a.fecha ? 1 : -1; });
+                    var hoy = new Date();
+                    for (var i = 0; i < sorted.length; i++) {
+                        var df = sorted[i].fecha ? new Date(sorted[i].fecha) : null;
+                        if (df) {
+                            var diff = Math.floor((hoy - df) / (86400000));
+                            if (diff === i) racha++;
+                            else break;
+                        }
+                    }
+                }
+                document.getElementById('dash-racha').textContent = racha;
+            } catch (e) { /* ignore */ }
+            try {
+                var count = await API_Service.get('/Logros/contarLogros/' + uid);
+                var el2 = document.getElementById('dash-logros');
+                if (el2) el2.textContent = count;
+            } catch (e) { /* ignore */ }
+            try {
+                var logros = await API_Service.get('/Logros/usuario/' + uid);
+                var cont = document.getElementById('dash-logros-list');
+                if (cont) {
+                    if (!logros || logros.length === 0) {
+                        cont.innerHTML =
+                            '<div class="text-sm" style="color:#94a3b8;">An no tienes logros. Sigue registrando actividades para ganarlos.</div>';
+                    } else {
+                        cont.innerHTML = logros.slice(0, 5).map(function(l) {
+                            return '<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"><i class="fas fa-medal" style="color:var(--secondary);"></i><span class="text-sm font-medium">Logro #' +
+                                l.idLogro + '</span><span class="text-xs" style="color:#94a3b8;">' + (l.fechaObtenido ||
+                                    '') + '</span></div>';
+                        }).join('');
+                    }
+                }
+            } catch (e) { /* ignore */ }
+            try { cargarRangoUsuario(); } catch (e) { /* ignore */ }
+        }
+
+        async function cargarRangoUsuario() {
+            if (!STATE.user) return;
+            try {
+                var rangos = await API_Service.get('/rangos/all');
+                var pts = STATE.user.totalPoints || 0;
+                var r = null;
+                for (var i = 0; i < rangos.length; i++) {
+                    if (pts >= rangos[i].puntosMinimos && pts <= rangos[i].puntosMaximos) { r = rangos[i]; break; }
+                }
+                if (r) {
+                    var el = document.getElementById('dash-rango');
+                    if (el) el.textContent = r.nombre;
+                }
+            } catch (e) { /* ignore */ }
+        }
+
+        // ============================================================
+        // REGISTRO DIARIO (CRUD)
+        // ============================================================
+        function renderRegistros() {
+            return `
+            <div class="animate-fade space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="search-box flex-1 max-w-xs">
+                  <i class="fas fa-search"></i>
+                  <input type="text" class="input-field" placeholder="Buscar por fecha..." oninput="filtrarRegistros(event)">
+                </div>
+                <button class="btn-primary flex items-center gap-2" onclick="mostrarFormRegistro()"><i class="fas fa-plus"></i>Nuevo registro</button>
+              </div>
+              <div class="table-container card p-0">
+                <table>
+                  <thead>
+                    <tr><th>ID</th><th>Fecha</th><th>Hora</th><th>Puntos</th><th>Notas</th><th class="text-right">Acciones</th></tr>
+                  </thead>
+                  <tbody id="registros-tbody">
+                    <tr><td colspan="6" class="text-center py-8" style="color:#94a3b8;">Cargando...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>`;
+        }
+
+        function filtrarRegistros(e) { /* client-side filter */ }
+
+        var _registrosCache = [];
+
+        async function loadRegistros() {
+            try {
+                var data = await API_Service.get('/registros-diarios/usuario/' + STATE.user.id);
+                _registrosCache = data || [];
+                renderRegistrosTable(_registrosCache);
+            } catch (e) { toast('Error al cargar registros', 'error'); }
+        }
+
+        function renderRegistrosTable(lista) {
+            var tb = document.getElementById('registros-tbody');
+            if (!tb) return;
+            if (!lista || lista.length === 0) {
+                tb.innerHTML =
+                    '<tr><td colspan="6" class="text-center py-8" style="color:#94a3b8;"><i class="fas fa-calendar mb-2 block text-3xl" style="opacity:0.4;"></i>No hay registros. Crea tu primer registro diario.</td></tr>';
+                return;
+            }
+            tb.innerHTML = lista.map(function(r) {
+                return '<tr><td class="font-medium">' + r.id + '</td><td>' + (r.fecha || '-') + '</td><td>' + (r
+                    .horaRegistro || '-') + '</td><td><span class="badge badge-accent">' + (r.puntosDelDia || 0) +
+                    ' pts</span></td><td class="max-w-[200px] truncate">' + (r.notas || '-') +
+                    '</td><td class="text-right"><div class="flex gap-2 justify-end"><button class="text-sm px-3 py-1.5 rounded-lg font-medium" style="background:rgba(0,109,119,0.1);color:var(--secondary);" onclick="verRegistro(' +
+                    r.id +
+                    ')"><i class="fas fa-eye"></i></button><button class="text-sm px-3 py-1.5 rounded-lg font-medium" style="background:rgba(128,224,207,0.2);color:#006d77;" onclick="editarRegistro(' +
+                    r.id +
+                    ')"><i class="fas fa-edit"></i></button><button class="text-sm px-3 py-1.5 rounded-lg font-medium" style="background:rgba(239,68,68,0.1);color:#ef4444;" onclick="eliminarRegistro(' +
+                    r.id + ')"><i class="fas fa-trash"></i></button></div></td></tr>';
+            }).join('');
+        }
+
+        function mostrarFormRegistro(datos) {
+            var d = datos || {};
+            var esEdicion = !!d.id;
+            var html = `
+            <h3 class="text-xl font-bold mb-6" style="color:var(--primary);">${esEdicion ? 'Editar' : 'Nuevo'} registro diario</h3>
+            <form id="form-registro" onsubmit="guardarRegistro(event, ${d.id || 'null'})">
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Fecha</label>
+                <input type="date" name="fecha" class="input-field" value="${d.fecha || ''}" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Hora de registro</label>
+                <input type="time" name="horaRegistro" class="input-field" value="${d.horaRegistro || ''}" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Notas</label>
+                <textarea name="notas" class="input-field" rows="3">${d.notas || ''}</textarea>
+              </div>
+              <div class="flex gap-3 justify-end mt-6">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary" id="btn-guardar-registro">${esEdicion ? 'Actualizar' : 'Crear'}</button>
+              </div>
+            </form>`;
+            showModal(html);
+        }
+
+        async function guardarRegistro(e, id) {
+            e.preventDefault();
+            var fd = new FormData(e.target);
+            var body = { idUsuario: STATE.user.id, fecha: fd.get('fecha'), horaRegistro: fd.get('horaRegistro'),
+                notas: fd.get('notas') };
+            try {
+                if (id) {
+                    await API_Service.put('/registros-diarios/update/' + id, body);
+                    toast('Registro actualizado', 'success');
+                } else {
+                    await API_Service.post('/registros-diarios/add', body);
+                    toast('Registro creado', 'success');
+                }
+                closeModal();
+                await recargarUsuario();
+                loadRegistros();
+            } catch (e) { toast(e.message || 'Error', 'error'); }
+        }
+
+        function verRegistro(id) {
+            var r = _registrosCache.find(function(x) { return x.id === id; });
+            if (!r) return;
+            var html = `
+            <h3 class="text-xl font-bold mb-4" style="color:var(--primary);">Registro #${r.id}</h3>
+            <div class="space-y-3 text-sm">
+              <div><strong>Fecha:</strong> ${r.fecha || '-'}</div>
+              <div><strong>Hora:</strong> ${r.horaRegistro || '-'}</div>
+              <div><strong>Puntos del da:</strong> <span class="badge badge-accent">${r.puntosDelDia || 0} pts</span></div>
+              <div><strong>Notas:</strong> ${r.notas || 'Sin notas'}</div>
+            </div>
+            <div class="flex justify-end mt-6">
+              <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
+            </div>`;
+            showModal(html);
+        }
+
+        function editarRegistro(id) {
+            var r = _registrosCache.find(function(x) { return x.id === id; });
+            if (r) mostrarFormRegistro(r);
+        }
+
+        async function eliminarRegistro(id) {
+            if (!confirm('\u00bfEliminar este registro?')) return;
+            try { await API_Service.del('/registros-diarios/delete/' + id);
+                await recargarUsuario();
+                toast('Registro eliminado', 'success');
+                loadRegistros(); } catch (e) { toast('Error', 'error'); }
+        }
+
+        // ============================================================
+        // COMIDAS / NUTRICIN (CRUD)
+        // ============================================================
+        function renderComidas() {
+            return `
+            <div class="animate-fade space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="flex gap-2 flex-wrap">
+                  <select class="input-field w-auto" id="comida-filtro-registro" onchange="loadComidas()">
+                    <option value="">Todos los registros</option>
+                  </select>
+                </div>
+                <button class="btn-primary flex items-center gap-2" onclick="mostrarFormComida()"><i class="fas fa-plus"></i>Registrar comida</button>
+              </div>
+              <div class="table-container card p-0">
+                <table>
+                  <thead>
+                    <tr><th>ID</th><th>ID Registro</th><th>ID Tipo</th><th>Porciones</th><th>Momento</th><th>Puntos</th><th>Caloras</th><th class="text-right">Acciones</th></tr>
+                  </thead>
+                  <tbody id="comidas-tbody">
+                    <tr><td colspan="8" class="text-center py-8" style="color:#94a3b8;">Cargando...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>`;
+        }
+
+        var _comidasCache = [];
+
+        async function loadComidas() {
+            try {
+                var data = await API_Service.get('/comidas/all');
+                _comidasCache = data || [];
+                var sel = document.getElementById('comida-filtro-registro');
+                if (sel) {
+                    var ids = {};
+                    _comidasCache.forEach(function(c) { ids[c.idRegistro] = true; });
+                    var opts = sel.querySelectorAll('option:not(:first-child)');
+                    for (var i = 0; i < opts.length; i++) opts[i].remove();
+                    Object.keys(ids).forEach(function(k) {
+                        var o = document.createElement('option');
+                        o.value = k;
+                        o.textContent = 'Registro #' + k;
+                        sel.appendChild(o);
+                    });
+                }
+                renderComidasTable(_comidasCache);
+            } catch (e) { toast('Error al cargar comidas', 'error'); }
+        }
+
+        function renderComidasTable(lista) {
+            var tb = document.getElementById('comidas-tbody');
+            if (!tb) return;
+            var filtro = document.getElementById('comida-filtro-registro');
+            var val = filtro ? filtro.value : '';
+            if (val) lista = lista.filter(function(c) { return c.idRegistro == val; });
+            if (!lista || lista.length === 0) {
+                tb.innerHTML =
+                    '<tr><td colspan="8" class="text-center py-8" style="color:#94a3b8;"><i class="fas fa-utensils mb-2 block text-3xl" style="opacity:0.4;"></i>No hay comidas registradas.</td></tr>';
+                return;
+            }
+            tb.innerHTML = lista.map(function(c) {
+                return '<tr><td class="font-medium">' + c.id + '</td><td>' + c.idRegistro + '</td><td>' + c
+                    .idTipoComida + '</td><td>' + c.cantidadPorciones + '</td><td>' + (c.momentoDelDia ||
+                    '-') + '</td><td><span class="badge badge-accent">' + (c.puntosOtorgados || 0) +
+                    '</span></td><td>' + (c.caloriasConsumidas != null ? c.caloriasConsumidas : '-') +
+                    '</td><td class="text-right"><div class="flex gap-2 justify-end"><button class="text-sm px-3 py-1.5 rounded-lg" style="background:rgba(128,224,207,0.2);color:#006d77;" onclick="editarComida(' +
+                    c.id +
+                    ')"><i class="fas fa-edit"></i></button><button class="text-sm px-3 py-1.5 rounded-lg" style="background:rgba(239,68,68,0.1);color:#ef4444;" onclick="eliminarComida(' +
+                    c.id + ')"><i class="fas fa-trash"></i></button></div></td></tr>';
+            }).join('');
+        }
+
+        function mostrarFormComida(datos) {
+            var d = datos || {};
+            var esEdicion = !!d.id;
+            var html = `
+            <h3 class="text-xl font-bold mb-6" style="color:var(--primary);">${esEdicion ? 'Editar' : 'Registrar'} comida</h3>
+            <form id="form-comida" onsubmit="guardarComida(event, ${d.id || 'null'})">
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">ID Registro</label>
+                <input type="number" name="idRegistro" class="input-field" value="${d.idRegistro || ''}" required min="1">
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">ID Tipo de Comida</label>
+                <input type="number" name="idTipoComida" class="input-field" value="${d.idTipoComida || ''}" required min="1">
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Cantidad de porciones</label>
+                <input type="number" name="cantidadPorciones" class="input-field" value="${d.cantidadPorciones || 1}" required min="1">
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Momento del da</label>
+                <select name="momentoDelDia" class="input-field" required>
+                  <option value="">Seleccionar...</option>
+                  <option value="desayuno" ${d.momentoDelDia === 'desayuno' ? 'selected' : ''}>Desayuno</option>
+                  <option value="almuerzo" ${d.momentoDelDia === 'almuerzo' ? 'selected' : ''}>Almuerzo</option>
+                  <option value="cena" ${d.momentoDelDia === 'cena' ? 'selected' : ''}>Cena</option>
+                  <option value="snack" ${d.momentoDelDia === 'snack' ? 'selected' : ''}>Snack</option>
+                </select>
+              </div>
+              <div class="flex gap-3 justify-end mt-6">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary">${esEdicion ? 'Actualizar' : 'Registrar'}</button>
+              </div>
+            </form>`;
+            showModal(html);
+        }
+
+        async function guardarComida(e, id) {
+            e.preventDefault();
+            var fd = new FormData(e.target);
+            var body = { idRegistro: parseInt(fd.get('idRegistro')), idTipoComida: parseInt(fd.get('idTipoComida')),
+                cantidadPorciones: parseInt(fd.get('cantidadPorciones')), momentoDelDia: fd.get('momentoDelDia') };
+            try {
+                if (id) {
+                    await API_Service.put('/comidas/actualizar/' + id, body);
+                    toast('Comida actualizada', 'success');
+                } else {
+                    await API_Service.post('/comidas/add', body);
+                    toast('Comida registrada', 'success');
+                }
+                closeModal();
+                await recargarUsuario();
+                loadComidas();
+            } catch (e) { toast(e.message || 'Error', 'error'); }
+        }
+
+        function editarComida(id) {
+            var c = _comidasCache.find(function(x) { return x.id === id; });
+            if (c) mostrarFormComida(c);
+        }
+
+        async function eliminarComida(id) {
+            if (!confirm('\u00bfEliminar esta comida?')) return;
+            try { await API_Service.del('/comidas/eliminar/' + id);
+                await recargarUsuario();
+                toast('Comida eliminada', 'success');
+                loadComidas(); } catch (e) { toast('Error', 'error'); }
+        }
+
+        // ============================================================
+        // EJERCICIOS (CRUD)
+        // ============================================================
+        function renderEjercicios() {
+            return `
+            <div class="animate-fade space-y-4">
+              <div class="flex justify-end">
+                <button class="btn-primary flex items-center gap-2" onclick="mostrarFormEjercicio()"><i class="fas fa-plus"></i>Registrar ejercicio</button>
+              </div>
+              <div class="table-container card p-0">
+                <table>
+                  <thead>
+                    <tr><th>ID</th><th>ID Registro</th><th>ID Tipo</th><th>Minutos</th><th>Intensidad</th><th>Puntos</th><th class="text-right">Acciones</th></tr>
+                  </thead>
+                  <tbody id="ejercicios-tbody">
+                    <tr><td colspan="7" class="text-center py-8" style="color:#94a3b8;">Cargando...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>`;
+        }
+
+        var _ejerciciosCache = [];
+
+        async function loadEjercicios() {
+            try {
+                var data = await API_Service.get('/ejercicios/all');
+                _ejerciciosCache = data || [];
+                renderEjerciciosTable(_ejerciciosCache);
+            } catch (e) { toast('Error al cargar ejercicios', 'error'); }
+        }
+
+        function renderEjerciciosTable(lista) {
+            var tb = document.getElementById('ejercicios-tbody');
+            if (!tb) return;
+            if (!lista || lista.length === 0) {
+                tb.innerHTML =
+                    '<tr><td colspan="7" class="text-center py-8" style="color:#94a3b8;"><i class="fas fa-dumbbell mb-2 block text-3xl" style="opacity:0.4;"></i>No hay ejercicios registrados.</td></tr>';
+                return;
+            }
+            tb.innerHTML = lista.map(function(e) {
+                return '<tr><td class="font-medium">' + e.id + '</td><td>' + e.idRegistro + '</td><td>' + e
+                    .idTipoEjercicio + '</td><td>' + e.minutos + ' min</td><td><span class="badge ' + (e
+                    .intensidad === 'alta' ? 'badge-primary' : 'badge-accent') + '">' + (e.intensidad || '-') +
+                    '</span></td><td><span class="badge badge-accent">' + (e.puntosOtorgados || 0) +
+                    '</span></td><td class="text-right"><div class="flex gap-2 justify-end"><button class="text-sm px-3 py-1.5 rounded-lg" style="background:rgba(128,224,207,0.2);color:#006d77;" onclick="editarEjercicio(' +
+                    e.id +
+                    ')"><i class="fas fa-edit"></i></button><button class="text-sm px-3 py-1.5 rounded-lg" style="background:rgba(239,68,68,0.1);color:#ef4444;" onclick="eliminarEjercicio(' +
+                    e.id + ')"><i class="fas fa-trash"></i></button></div></td></tr>';
+            }).join('');
+        }
+
+        function mostrarFormEjercicio(datos) {
+            var d = datos || {};
+            var esEdicion = !!d.id;
+            var html = `
+            <h3 class="text-xl font-bold mb-6" style="color:var(--primary);">${esEdicion ? 'Editar' : 'Registrar'} ejercicio</h3>
+            <form id="form-ejercicio" onsubmit="guardarEjercicio(event, ${d.id || 'null'})">
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">ID Registro</label>
+                <input type="number" name="idRegistro" class="input-field" value="${d.idRegistro || ''}" required min="1">
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">ID Tipo Ejercicio</label>
+                <input type="number" name="idTipoEjercicio" class="input-field" value="${d.idTipoEjercicio || ''}" required min="1">
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Minutos</label>
+                <input type="number" name="minutos" class="input-field" value="${d.minutos || 30}" required min="1">
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Intensidad</label>
+                <select name="intensidad" class="input-field" required>
+                  <option value="">Seleccionar...</option>
+                  <option value="baja" ${d.intensidad === 'baja' ? 'selected' : ''}>Baja</option>
+                  <option value="media" ${d.intensidad === 'media' ? 'selected' : ''}>Media</option>
+                  <option value="alta" ${d.intensidad === 'alta' ? 'selected' : ''}>Alta</option>
+                </select>
+              </div>
+              <div class="flex gap-3 justify-end mt-6">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary">${esEdicion ? 'Actualizar' : 'Registrar'}</button>
+              </div>
+            </form>`;
+            showModal(html);
+        }
+
+        async function guardarEjercicio(e, id) {
+            e.preventDefault();
+            var fd = new FormData(e.target);
+            var body = { idRegistro: parseInt(fd.get('idRegistro')), idTipoEjercicio: parseInt(fd.get(
+                    'idTipoEjercicio')), minutos: parseInt(fd.get('minutos')), intensidad: fd.get('intensidad') };
+            try {
+                if (id) {
+                    await API_Service.put('/ejercicios/actualizar/' + id, body);
+                    toast('Ejercicio actualizado', 'success');
+                } else {
+                    await API_Service.post('/ejercicios/add', body);
+                    toast('Ejercicio registrado', 'success');
+                }
+                closeModal();
+                await recargarUsuario();
+                loadEjercicios();
+            } catch (e) { toast(e.message || 'Error', 'error'); }
+        }
+
+        function editarEjercicio(id) {
+            var e = _ejerciciosCache.find(function(x) { return x.id === id; });
+            if (e) mostrarFormEjercicio(e);
+        }
+
+        async function eliminarEjercicio(id) {
+            if (!confirm('\u00bfEliminar este ejercicio?')) return;
+            try { await API_Service.del('/ejercicios/eliminar/' + id);
+                await recargarUsuario();
+                toast('Ejercicio eliminado', 'success');
+                loadEjercicios(); } catch (e) { toast('Error', 'error'); }
+        }
+
+        // ============================================================
+        // HABITOS (CRUD)
+        // ============================================================
+        function renderHabitos() {
+            return `
+            <div class="animate-fade space-y-4">
+              <div class="flex justify-end">
+                <button class="btn-primary flex items-center gap-2" onclick="mostrarFormHabito()"><i class="fas fa-plus"></i>Nuevo hbito</button>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="habitos-grid"></div>
+            </div>`;
+        }
+
+        var _habitosCache = [];
+
+        async function loadHabitos() {
+            try {
+                var data = await API_Service.get('/Habitos/registro/' + STATE.user.id);
+                _habitosCache = data || [];
+                renderHabitosGrid(_habitosCache);
+            } catch (e) { toast('Error al cargar hbitos', 'error'); }
+        }
+
+        function renderHabitosGrid(lista) {
+            var g = document.getElementById('habitos-grid');
+            if (!g) return;
+            if (!lista || lista.length === 0) {
+                g.innerHTML =
+                    '<div class="col-span-full text-center py-12" style="color:#94a3b8;"><i class="fas fa-check-double text-4xl mb-3 block opacity-40"></i>No hay hbitos. Crea tu primer hbito saludable.</div>';
+                return;
+            }
+            g.innerHTML = lista.map(function(h) {
+                var comp = h.completado;
+                return '<div class="card flex items-center gap-4 ' + (comp ? 'border-l-4' : '') + '" style="' + (comp ?
+                        'border-left-color:var(--accent);' : '') + '">' +
+                    '<button class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg transition-all ' +
+                    (comp ? 'text-white' : 'border-2') + '" style="' + (comp ? 'background:var(--accent);' :
+                        'border-color:#e2e8f0;color:#94a3b8;') + '" onclick="toggleHabito(' + h.id + ',' + (!comp) +
+                    ')">' +
+                    '<i class="fas ' + (comp ? 'fa-check' : 'fa-circle') + '"></i></button>' +
+                    '<div class="flex-1 min-w-0"><div class="font-semibold text-sm">' + (h.tipoHabito || 'Sin nombre') +
+                    '</div><div class="text-xs" style="color:#94a3b8;">' + (h.puntosOtorgados || 0) + ' pts</div></div>' +
+                    '<button class="text-sm px-2 py-1 rounded-lg" style="color:#ef4444;" onclick="eliminarHabito(' + h
+                    .id + ')"><i class="fas fa-trash"></i></button>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function mostrarFormHabito(datos) {
+            var d = datos || {};
+            var html = `
+            <h3 class="text-xl font-bold mb-6" style="color:var(--primary);">Nuevo hbito</h3>
+            <form id="form-habito" onsubmit="guardarHabito(event)">
+              <div class="mb-4">
+                <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Tipo de hbito</label>
+                <input type="text" name="tipoHabito" class="input-field" placeholder="Ej: Beber agua, Meditar, Leer..." value="${d.tipoHabito || ''}" required>
+              </div>
+              <div class="mb-4">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" name="completado" value="true" ${d.completado ? 'checked' : ''} class="w-5 h-5" style="accent-color:var(--secondary);">
+                  <span class="text-sm font-medium" style="color:var(--primary);">Marcar como completado</span>
+                </label>
+              </div>
+              <div class="flex gap-3 justify-end mt-6">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary">Crear</button>
+              </div>
+            </form>`;
+            showModal(html);
+        }
+
+        async function guardarHabito(e) {
+            e.preventDefault();
+            var fd = new FormData(e.target);
+            var body = { idUsuario: STATE.user.id, tipoHabito: fd.get('tipoHabito'), completado: fd.get('completado') ===
+                    'true' };
+            try {
+                await API_Service.post('/Habitos/add', body);
+                await recargarUsuario();
+                toast('H\u00e1bito creado', 'success');
+                closeModal();
+                loadHabitos();
+            } catch (e) { toast(e.message || 'Error', 'error'); }
+        }
+
+        async function toggleHabito(id, completado) {
+            try {
+                await API_Service.put('/Habitos/actualizarCompletado/' + id + '?completado=' + completado, {});
+                await recargarUsuario();
+                toast(completado ? '\u00a1H\u00e1bito completado! +10 pts' : 'H\u00e1bito desmarcado', completado ? 'success' : 'info');
+                loadHabitos();
+            } catch (e) { toast('Error', 'error'); }
+        }
+
+        async function eliminarHabito(id) {
+            if (!confirm('\u00bfEliminar este h\u00e1bito?')) return;
+            try { await API_Service.del('/Habitos/eliminar/' + id);
+                await recargarUsuario();
+                toast('H\u00e1bito eliminado', 'success');
+                loadHabitos(); } catch (e) { toast('Error', 'error'); }
+        }
+
+        async function recargarUsuario() {
+            try {
+                var u = await API_Service.get('/usuarios/get-by-id/' + STATE.user.id);
+                if (u) { STATE.user = u;
+                    actualizarBadges(); }
+            } catch (e) { /* ignore */ }
+        }
+
+        function actualizarBadges() {
+            var u = STATE.user || {};
+            var pts = u.totalPoints || 0;
+            var ptsEls = document.querySelectorAll('.badge-accent .fa-star');
+            ptsEls.forEach(function(el) {
+                var parent = el.parentElement;
+                if (parent) {
+                    var span = parent.querySelector('span');
+                    if (span) span.textContent = pts + ' pts';
+                }
+            });
+        }
+
+
+
+        // ============================================================
+        // LOGROS
+        // ============================================================
+        function renderLogros() {
+            return `
+            <div class="animate-fade space-y-6">
+              <h3 class="text-lg font-bold" style="color:var(--primary);"><i class="fas fa-trophy mr-2" style="color:var(--secondary);"></i>Mis logros</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="logros-grid"></div>
+              <hr class="my-6">
+              <h3 class="text-lg font-bold" style="color:var(--primary);"><i class="fas fa-list mr-2" style="color:var(--secondary);"></i>Todos los logros disponibles</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="logros-disponibles-grid"></div>
+            </div>`;
+        }
+
+        async function loadLogrosView() {
+            try {
+                var uid = STATE.user.id;
+                var logrosUser = await API_Service.get('/Logros/usuario/' + uid) || [];
+                var todos = await API_Service.get('/Logros') || [];
+                var g1 = document.getElementById('logros-grid');
+                var g2 = document.getElementById('logros-disponibles-grid');
+                var userLogroIds = {};
+                logrosUser.forEach(function(lu) { userLogroIds[lu.idLogro] = lu; });
+                if (g1) {
+                    if (logrosUser.length === 0) {
+                        g1.innerHTML =
+                            '<div class="col-span-full text-center py-8" style="color:#94a3b8;">An no has obtenido logros.</div>';
+                    } else {
+                        g1.innerHTML = logrosUser.map(function(lu) {
+                            return '<div class="achievement-card"><div class="achievement-icon" style="background:rgba(128,224,207,0.2);color:var(--secondary);"><i class="fas fa-medal"></i></div><div class="flex-1"><div class="font-semibold">Logro #' +
+                                lu.idLogro + '</div><div class="text-xs" style="color:#94a3b8;">Obtenido: ' + (lu
+                                .fechaObtenido || '-') + '</div></div></div>';
+                        }).join('');
+                    }
+                }
+                if (g2) {
+                    if (todos.length === 0) {
+                        g2.innerHTML =
+                            '<div class="col-span-full text-center py-8" style="color:#94a3b8;">No hay logros disponibles en el sistema.</div>';
+                    } else {
+                        g2.innerHTML = todos.map(function(l) {
+                            var tiene = userLogroIds[l.id];
+                            return '<div class="card flex items-center gap-4 ' + (tiene ? 'opacity-75' :
+                                '') + '"><div class="achievement-icon ' + (tiene ? '' :
+                                'border-2 border-dashed') + '" style="' + (tiene ?
+                                    'background:rgba(128,224,207,0.2);color:var(--secondary);' :
+                                    'border-color:#e2e8f0;color:#94a3b8;') + '"><i class="fas ' + (tiene ?
+                                    'fa-check-circle' : 'fa-lock') + '"></i></div><div class="flex-1 min-w-0"><div class="font-semibold text-sm">' +
+                                (l.nombre || 'Logro #' + l.id) + '</div><div class="text-xs" style="color:#94a3b8;">' +
+                                (l.descripcion || l.condicion || '') + '</div></div>' +
+                                (l.puntosBonus ? '<span class="badge badge-accent">+' + l.puntosBonus +
+                                ' pts</span>' : '') + '</div>';
+                        }).join('');
+                    }
+                }
+            } catch (e) { toast('Error al cargar logros', 'error'); }
+        }
+
+        // ============================================================
+        // PERFIL
+        // ============================================================
+        function renderPerfil() {
+            var u = STATE.user || {};
+            return `
+            <div class="animate-fade max-w-2xl mx-auto space-y-6">
+              <div class="card text-center">
+                <div class="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center text-white text-3xl font-bold mb-4" style="background: var(--secondary);">
+                  ${(u.name || 'U').charAt(0).toUpperCase()}
+                </div>
+                <h2 class="text-2xl font-bold" style="color:var(--primary);">${u.name || 'Sin nombre'}</h2>
+                <p style="color:#64748b;">${u.email || ''}</p>
+                <div class="flex justify-center gap-4 mt-4">
+                  <span class="badge badge-primary"><i class="fas fa-star mr-1"></i>${u.totalPoints || 0} pts</span>
+                  <span class="badge badge-accent"><i class="fas fa-shield-alt mr-1"></i>${u.range || 'Sin rango'}</span>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3 class="font-bold text-lg mb-4" style="color:var(--primary);">Editar perfil</h3>
+                <form id="form-perfil" onsubmit="guardarPerfil(event)">
+                  <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Nombre</label>
+                    <input type="text" name="name" class="input-field" value="${u.name || ''}" required>
+                  </div>
+                  <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Correo electronico</label>
+                    <input type="email" name="email" class="input-field" value="${u.email || ''}" required>
+                  </div>
+                  <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-1.5" style="color:var(--primary);">Nueva contrasea (dejar en blanco para mantener)</label>
+                    <input type="password" name="password" class="input-field" placeholder="••••••••" minlength="8">
+                  </div>
+                  <button type="submit" class="btn-primary">Guardar cambios</button>
+                </form>
+              </div>
+            </div>`;
+        }
+
+        function loadPerfil() { /* nothing extra */ }
+
+        async function guardarPerfil(e) {
+            e.preventDefault();
+            var fd = new FormData(e.target);
+            var body = { name: fd.get('name'), email: fd.get('email') };
+            var pwd = fd.get('password');
+            if (pwd) body.password = pwd;
+            try {
+                var updated = await API_Service.put('/usuarios/update/' + STATE.user.id, body);
+                STATE.user = updated;
+                toast('Perfil actualizado', 'success');
+                render();
+            } catch (e) { toast(e.message || 'Error', 'error'); }
+        }
+
+        // ============================================================
+        // REPORTES (Canvas Charts)
+        // ============================================================
+        function renderReportes() {
+            return `
+            <div class="animate-fade space-y-6">
+              <h3 class="text-lg font-bold" style="color:var(--primary);"><i class="fas fa-chart-line mr-2" style="color:var(--secondary);"></i>Reportes</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                  <h4 class="font-semibold mb-3" style="color:var(--primary);">Puntos por da</h4>
+                  <canvas id="chart-puntos" height="220"></canvas>
+                </div>
+                <div class="card">
+                  <h4 class="font-semibold mb-3" style="color:var(--primary);">Distribucin de actividad</h4>
+                  <canvas id="chart-distribucion" height="220"></canvas>
+                </div>
+              </div>
+              <div class="card">
+                <h4 class="font-semibold mb-3" style="color:var(--primary);">Resumen de registros</h4>
+                <div id="reportes-resumen" class="text-sm" style="color:#64748b;">Cargando...</div>
+              </div>
+            </div>`;
+        }
+
+        async function loadReportes() {
+            try {
+                var uid = STATE.user.id;
+                var registros = await API_Service.get('/registros-diarios/usuario/' + uid) || [];
+                var resumen = document.getElementById('reportes-resumen');
+                if (resumen) {
+                    var totalPts = 0;
+                    registros.forEach(function(r) { totalPts += (r.puntosDelDia || 0); });
+                    resumen.innerHTML = '<p>Total de registros: <strong>' + registros.length +
+                        '</strong></p><p>Puntos acumulados en registros: <strong>' + totalPts +
+                        '</strong></p><p>Promedio por da: <strong>' + (registros.length > 0 ? (totalPts / registros
+                        .length).toFixed(1) : 0) + '</strong></p>';
+                }
+                drawChartPuntos(registros);
+                drawChartDistribucion();
+            } catch (e) { toast('Error al cargar reportes', 'error'); }
+        }
+
+        function drawChartPuntos(registros) {
+            var canvas = document.getElementById('chart-puntos');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var W = canvas.width || canvas.parentElement.clientWidth;
+            var H = 220;
+            canvas.width = W;
+            canvas.height = H;
+            var sorted = registros.slice().sort(function(a, b) { return (a.fecha || '') > (b.fecha || '') ? 1 : -1; });
+            var items = sorted.slice(-10);
+            var max = 1;
+            items.forEach(function(r) { if ((r.puntosDelDia || 0) > max) max = r.puntosDelDia || 0; });
+            var pad = { top: 20, bottom: 30, left: 40, right: 20 };
+            var chartW = W - pad.left - pad.right;
+            var chartH = H - pad.top - pad.bottom;
+            ctx.clearRect(0, 0, W, H);
+            if (items.length === 0) {
+                ctx.fillStyle = '#94a3b8';
+                ctx.textAlign = 'center';
+                ctx.font = '14px sans-serif';
+                ctx.fillText('Sin datos', W / 2, H / 2);
+                return;
+            }
+            var barW = chartW / items.length * 0.6;
+            var gap = chartW / items.length * 0.4;
+            ctx.fillStyle = '#e2e8f0';
+            items.forEach(function(r, i) {
+                var x = pad.left + i * (barW + gap) + gap / 2;
+                var h = max > 0 ? ((r.puntosDelDia || 0) / max) * chartH : 0;
+                var grad = ctx.createLinearGradient(x, pad.top + chartH, x, pad.top + chartH - h);
+                grad.addColorStop(0, '#80E0CF');
+                grad.addColorStop(1, '#006D77');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.roundRect(x, pad.top + chartH - h, barW, h, [4, 4, 0, 0]);
+                ctx.fill();
+                ctx.fillStyle = '#64748b';
+                ctx.textAlign = 'center';
+                ctx.font = '9px sans-serif';
+                ctx.fillText((r.fecha || '').slice(0, 5), x + barW / 2, H - 5);
+                ctx.fillStyle = '#006D77';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.fillText(r.puntosDelDia || '0', x + barW / 2, pad.top + chartH - h - 5);
+            });
+        }
+
+        function drawChartDistribucion() {
+            var canvas = document.getElementById('chart-distribucion');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var W = canvas.width || canvas.parentElement.clientWidth;
+            var H = 220;
+            canvas.width = W;
+            canvas.height = H;
+            var cx = W / 2,
+                cy = H / 2,
+                R = Math.min(W, H) / 2 - 30;
+            var data = [{ label: 'Comidas', value: 40, color: '#006D77' }, { label: 'Ejercicios', value: 35,
+                color: '#80E0CF' }, { label: 'Hbitos', value: 25, color: '#00454A' }];
+            var total = 0;
+            data.forEach(function(d) { total += d.value; });
+            if (total === 0) { ctx.fillStyle = '#94a3b8';
+                ctx.textAlign = 'center';
+                ctx.font = '14px sans-serif';
+                ctx.fillText('Sin datos', cx, cy); return; }
+            var start = -Math.PI / 2;
+            ctx.font = 'bold 11px sans-serif';
+            data.forEach(function(d) {
+                var angle = (d.value / total) * 2 * Math.PI;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, R, start, start + angle);
+                ctx.closePath();
+                ctx.fillStyle = d.color;
+                ctx.fill();
+                var mid = start + angle / 2;
+                var lx = cx + (R * 0.65) * Math.cos(mid);
+                var ly = cy + (R * 0.65) * Math.sin(mid);
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(d.value + '%', lx, ly);
+                start += angle;
+            });
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            var legendY = H - 30;
+            var lx2 = cx - 80;
+            data.forEach(function(d) {
+                ctx.fillStyle = d.color;
+                ctx.fillRect(lx2 - 12, legendY - 6, 10, 10);
+                ctx.fillStyle = '#64748b';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(d.label, lx2 + 2, legendY - 5);
+                lx2 += 70;
+            });
+        }
+
+        // ============================================================
+        // CATALOGOS (Rangos, TipoComida, TipoEjercicio)
+        // ============================================================
+        function renderCatalogos() {
+            return `
+            <div class="animate-fade space-y-6">
+              <div class="flex gap-2 flex-wrap mb-4">
+                <button class="tab-btn active" data-tab="rangos" onclick="switchCatalogo('rangos',this)">Rangos</button>
+                <button class="tab-btn" data-tab="tipos-comida" onclick="switchCatalogo('tipos-comida',this)">Tipos de comida</button>
+                <button class="tab-btn" data-tab="tipos-ejercicio" onclick="switchCatalogo('tipos-ejercicio',this)">Tipos de ejercicio</button>
+              </div>
+              <div id="catalogo-content"></div>
+            </div>`;
+        }
+
+        var _catalogoActual = 'rangos';
+
+        function switchCatalogo(tab, btn) {
+            _catalogoActual = tab;
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+            loadCatalogos();
+        }
+
+        async function loadCatalogos() {
+            var cont = document.getElementById('catalogo-content');
+            if (!cont) return;
+            try {
+                if (_catalogoActual === 'rangos') {
+                    var data = await API_Service.get('/rangos/all') || [];
+                    cont.innerHTML = renderCatalogoRangos(data);
+                } else if (_catalogoActual === 'tipos-comida') {
+                    var data = await API_Service.get('/tipos-comida/all') || [];
+                    cont.innerHTML = renderCatalogoTabla(data, 'TipoComida');
+                } else if (_catalogoActual === 'tipos-ejercicio') {
+                    var data = await API_Service.get('/tipos-ejercicio/all') || [];
+                    cont.innerHTML = renderCatalogoTabla(data, 'TipoEjercicio');
+                }
+            } catch (e) { cont.innerHTML =
+                    '<div class="text-center py-8" style="color:#ef4444;">Error al cargar catlogo</div>'; }
+        }
+
+        function renderCatalogoRangos(lista) {
+            if (!lista || lista.length === 0) {
+                return '<div class="text-center py-8" style="color:#94a3b8;">No hay rangos configurados.</div>';
+            }
+            var cards = lista.map(function(r) {
+                return '<div class="card text-center"><div class="w-14 h-14 mx-auto rounded-xl flex items-center justify-center text-2xl mb-3" style="background:' +
+                    (r.colorHex || '#e2e8f0') + '20;color:' + (r.colorHex || '#006D77') + ';"><i class="fas ' + (r
+                        .iconoUrl ? 'fa-' + r.iconoUrl : 'fa-shield-alt') + '"></i></div><div class="font-bold text-lg" style="color:var(--primary);">' +
+                    (r.nombre || 'Sin nombre') + '</div><div class="text-xs" style="color:#64748b;">' + (r
+                        .puntosMinimos || 0) + ' - ' + (r.puntosMaximos || 0) + ' pts</div></div>';
+            }).join('');
+            return '<div class="grid grid-cols-2 md:grid-cols-4 gap-4">' + cards + '</div>';
+        }
+
+        function renderCatalogoTabla(lista, tipo) {
+            if (!lista || lista.length === 0) {
+                return '<div class="text-center py-8" style="color:#94a3b8;">No hay registros en este catlogo.</div>';
+            }
+            var keys = Object.keys(lista[0] || {}).filter(function(k) { return k !== 'id' && k !== 'idTipoComida' && k !==
+                    'idTipoEjercicio'; });
+            var headers = keys.map(function(k) { return '<th>' + k.charAt(0).toUpperCase() + k.slice(1) + '</th>'; })
+                .join('');
+            var rows = lista.map(function(item) {
+                return '<tr>' + keys.map(function(k) {
+                    var v = item[k];
+                    if (v === null || v === undefined) v = '-';
+                    return '<td>' + v + '</td>';
+                }).join('') + '</tr>';
+            }).join('');
+            return '<div class="card p-0 table-container"><table><thead><tr>' + headers +
+                '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        render();
+    </script>
+
+</body>
+</html>

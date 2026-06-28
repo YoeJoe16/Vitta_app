@@ -7,7 +7,6 @@ import com.ucr.salud.repository.ComidaConsumidaRepository;
 import com.ucr.salud.repository.RegistroDiarioRepository;
 import com.ucr.salud.repository.TipoComidaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -45,15 +44,15 @@ public class ComidaConsumidaService {
         return comidaConsumidaRepository.findByIdRegistro(idRegistro);
     }
 
-    // Obtener comidas de un registro filtradas por momento del día
+    // Obtener comidas de un registro filtradas por momento del dia
     public List<ComidaConsumida> obtenerPorRegistroYMomento(Integer idRegistro, String momentoDelDia) {
         return comidaConsumidaRepository.findByIdRegistroAndMomentoDelDia(idRegistro, momentoDelDia);
     }
 
-    // Registrar una comida consumida; calcula puntos automáticamente
+    // Registrar una comida consumida; calcula puntos automaticamente
     public ComidaConsumida registrar(ComidaConsumidaDTO dto) {
-        if (!registroDiarioRepository.existsById(dto.getIdUsuario())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registro no encontrado con id: " + dto.getIdUsuario());
+        if (!registroDiarioRepository.existsById(dto.getIdRegistro())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Registro no encontrado con id: " + dto.getIdRegistro());
         }
         TipoComida tipo = tipoComidaRepository.findById(dto.getIdTipoComida())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de comida no encontrado con id: " + dto.getIdTipoComida()));
@@ -61,18 +60,18 @@ public class ComidaConsumidaService {
         int puntos = tipo.getPuntosBase() * dto.getCantidadPorciones();
 
         ComidaConsumida comida = new ComidaConsumida();
-        comida.setIdRegistro(dto.getIdUsuario());
+        comida.setIdRegistro(dto.getIdRegistro());
         comida.setIdTipoComida(dto.getIdTipoComida());
         comida.setCantidadPorciones(dto.getCantidadPorciones());
         comida.setMomentoDelDia(dto.getMomentoDelDia());
         comida.setPuntosOtorgados(puntos);
 
         ComidaConsumida guardada = comidaConsumidaRepository.save(comida);
-        registroDiarioService.recalcularPuntos(dto.getIdUsuario());
+        registroDiarioService.recalcularPuntos(dto.getIdRegistro());
         return guardada;
     }
 
-    // Actualizar porciones o momento del día y recalcular puntos
+    // Actualizar porciones o momento del dia y recalcular puntos
     public ComidaConsumida actualizar(Integer id, ComidaConsumida datos) {
         ComidaConsumida comida = comidaConsumidaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ComidaConsumida no encontrada con id: " + id));
@@ -84,7 +83,7 @@ public class ComidaConsumidaService {
             comida.setMomentoDelDia(datos.getMomentoDelDia());
         }
 
-        // Recalcular puntos con el nuevo número de porciones
+        // Recalcular puntos con el nuevo numero de porciones
         TipoComida tipo = tipoComidaRepository.findById(comida.getIdTipoComida())
                 .orElseThrow(() -> new RuntimeException("TipoComida no encontrado con id: " + comida.getIdTipoComida()));
         comida.setPuntosOtorgados(tipo.getPuntosBase() * comida.getCantidadPorciones());
@@ -109,10 +108,10 @@ public class ComidaConsumidaService {
         return comidaConsumidaRepository.sumPuntosByIdRegistro(idRegistro);
     }
 
-    // Registrar o actualizar las calorías de una comida consumida
+    // Registrar o actualizar las calorias de una comida consumida
     public Optional<ComidaConsumida> registrarCalorias(Integer id, Integer calorias) {
         if (calorias == null || calorias < 0) {
-            throw new RuntimeException("El valor de calorías debe ser un número positivo.");
+            throw new RuntimeException("El valor de calorias debe ser un numero positivo.");
         }
 
         ComidaConsumida comida = comidaConsumidaRepository.findById(id)
@@ -122,7 +121,7 @@ public class ComidaConsumidaService {
         return Optional.of(comidaConsumidaRepository.save(comida));
     }
 
-    // Suma total de calorías consumidas en un registro diario
+    // Suma total de calorias consumidas en un registro diario
     public Integer sumaCaloriasPorRegistro(Integer idRegistro) {
         return comidaConsumidaRepository.sumCaloriasByIdRegistro(idRegistro);
     }

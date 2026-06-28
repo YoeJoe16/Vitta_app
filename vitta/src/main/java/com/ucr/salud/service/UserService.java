@@ -73,7 +73,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Actualiza el rango del usuario según sus puntos totales
+    // Actualiza el rango del usuario segun sus puntos totales
     public void actualizarRango(User user) {
         Optional<Rango> rango = rangoRepository.findByPuntos(user.getTotalPoints());
         rango.ifPresent(r -> user.setRange(r.getNombre()));
@@ -90,5 +90,11 @@ public class UserService {
     // Verificar si existe por email
     public boolean existePorEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    // Login simulado (sin JWT): busca por email y compara contrase�a en texto plano
+    public Optional<User> login(String email, String password) {
+        return userRepository.findByEmail(email)
+                .filter(u -> u.getPassword() != null && u.getPassword().equals(password));
     }
 }

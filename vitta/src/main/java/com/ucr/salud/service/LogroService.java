@@ -28,7 +28,7 @@ public class LogroService {
     @Autowired
     private UserService userService;
 
-    // ─── Catálogo de logros ───────────────────────────────────────────────────
+    //Catalogo de logros
 
     public List<Logro> obtenerTodos() {
         return logroRepository.findAll();
@@ -67,7 +67,7 @@ public class LogroService {
         logroRepository.deleteById(id);
     }
 
-    // ─── Logros de un usuario ─────────────────────────────────────────────────
+    //Logros de un usuario
 
     public List<LogroUsuario> obtenerLogrosPorUsuario(Integer idUsuario) {
         return logroUsuarioRepository.findByIdUsuario(idUsuario);
@@ -77,7 +77,7 @@ public class LogroService {
         return logroUsuarioRepository.countByIdUsuario(idUsuario);
     }
 
-    // Otorgar un logro a un usuario (idempotente: no duplica si ya lo tiene)
+    // Otorgar un logro a un usuario (no duplica si ya lo tiene)
     public LogroUsuario otorgarLogro(Integer idUsuario, Integer idLogro) {
         if (!userRepository.existsById(idUsuario)) {
             throw new RuntimeException("Usuario no encontrado con id: " + idUsuario);
@@ -110,25 +110,24 @@ public class LogroService {
         return logroUsuarioRepository.existsByIdUsuarioAndIdLogro(idUsuario, idLogro);
     }
 
-    // Evaluar y otorgar logros automáticamente según puntos totales del usuario
-    public Logro evaluarLogrosAutomaticos(Integer idUsuario) {
+    // Evaluar y otorgar logros automaticamente segun puntos totales del usuario
+    public void evaluarLogrosAutomaticos(Integer idUsuario) {
         User user = userRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + idUsuario));
 
         List<Logro> todos = logroRepository.findAll();
         for (Logro logro : todos) {
             if (logroUsuarioRepository.existsByIdUsuarioAndIdLogro(idUsuario, logro.getId())) {
-                continue; // ya tiene este logro
+                continue;
             }
             if (cumpleCondicion(user, logro)) {
                 otorgarLogro(idUsuario, logro.getId());
             }
         }
-        return null;
     }
 
-    // Evaluación simple de condición basada en puntos totales
-    // Condición esperada en formato "puntos>=500" o "puntos>=1000"
+    // Evaluacion simple de condicion basada en puntos totales
+    // Condicion esperada en formato "puntos>=500" o "puntos>=1000"
     private boolean cumpleCondicion(User user, Logro logro) {
         if (logro.getCondicion() == null || logro.getCondicion().isBlank()) return false;
         try {

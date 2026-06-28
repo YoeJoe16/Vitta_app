@@ -7,34 +7,34 @@ import jakarta.validation.constraints.NotNull;
 public class ComidaConsumidaDTO {
 
     @NotNull(message = "El id del registro no puede ser nulo")
-    private Integer idUsuario;
+    private Integer idRegistro;
 
     @NotNull(message = "El id del tipo de comida no puede ser nulo")
     private Integer idTipoComida;
 
     @NotNull(message = "La cantidad de porciones no puede ser nula")
-    @Min(value = 1, message = "Debe ser al menos 1 porción")
+    @Min(value = 1, message = "Debe ser al menos 1 porcion")
     private Integer cantidadPorciones;
 
-    @NotBlank(message = "El momento del día no puede estar en blanco")
+    @NotBlank(message = "El momento del dia no puede estar en blanco")
     private String momentoDelDia;
 
     public ComidaConsumidaDTO() {
     }
 
-    public ComidaConsumidaDTO(Integer idUsuario, Integer idTipoComida, Integer cantidadPorciones, String momentoDelDia) {
-        this.idUsuario = idUsuario;
+    public ComidaConsumidaDTO(Integer idRegistro, Integer idTipoComida, Integer cantidadPorciones, String momentoDelDia) {
+        this.idRegistro = idRegistro;
         this.idTipoComida = idTipoComida;
         this.cantidadPorciones = cantidadPorciones;
         this.momentoDelDia = momentoDelDia;
     }
 
-    public Integer getIdUsuario() {
-        return idUsuario;
+    public Integer getIdRegistro() {
+        return idRegistro;
     }
 
-    public void setIdUsuario(Integer idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdRegistro(Integer idRegistro) {
+        this.idRegistro = idRegistro;
     }
 
     public Integer getIdTipoComida() {

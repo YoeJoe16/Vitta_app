@@ -34,7 +34,7 @@ public class HabitosSaludablesController {
         if (service.registrar(habitoSaludable)==null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ya esta registrado el id o no cumple los campos obligatorios");
         }
-        return ResponseEntity.ok("Ejercicio registrada exitosamente");
+        return ResponseEntity.ok("H\u00e1bito registrado exitosamente");
     }
     //findAll
     @GetMapping("/Habitos/all")
@@ -64,7 +64,7 @@ public class HabitosSaludablesController {
         return ResponseEntity.ok(habitoSaludable);
     }
 
-    @GetMapping("/Habitos//completado/{idUsuario}")
+    @GetMapping("/Habitos/completado/{idUsuario}")
     public ResponseEntity<List<?>> obtenerCompletadosPorUsuario(@PathVariable Integer idUsuario){
         List<HabitoSaludable> habitoSaludable=service.obtenerCompletadosPorUsuario(idUsuario);
         if(habitoSaludable.isEmpty()){
@@ -82,11 +82,9 @@ public class HabitosSaludablesController {
     }
 
     @PutMapping("/Habitos/actualizarCompletado/{id}")
-    public ResponseEntity<?> actualizarCompletado(@PathVariable Integer id, HabitoSaludable completado) {
-        if (service.actualizar(id,completado)==null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok("Habito completado exitosamente");
+    public ResponseEntity<?> actualizarCompletado(@PathVariable Integer id, @RequestParam Boolean completado) {
+        service.actualizarCompletado(id, completado);
+        return ResponseEntity.ok("Habito actualizado exitosamente");
     }
     @DeleteMapping("/Habitos/eliminar/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
@@ -99,7 +97,7 @@ public class HabitosSaludablesController {
     }
 
     @GetMapping("/Habito/sumaPuntosPorRegistro")
-    public Integer sumaPuntosPorRegistro(Integer idRegistro){
+    public Integer sumaPuntosPorRegistro(@RequestParam Integer idRegistro){
         return service.sumaPuntosPorRegistro(idRegistro);
     }
 }

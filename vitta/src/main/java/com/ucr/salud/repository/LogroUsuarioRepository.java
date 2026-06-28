@@ -13,11 +13,11 @@ public interface LogroUsuarioRepository extends JpaRepository<LogroUsuario, Inte
     // Todos los logros obtenidos por un usuario
     List<LogroUsuario> findByIdUsuario(Integer idUsuario);
 
-    // Verifica si un usuario ya tiene un logro específico
+    // Verifica si un usuario ya tiene un logro especifico
     Optional<LogroUsuario> findByIdUsuarioAndIdLogro(Integer idUsuario, Integer idLogro);
 
     boolean existsByIdUsuarioAndIdLogro(Integer idUsuario, Integer idLogro);
 
-    // Cuántos logros tiene un usuario (útil para reportes)
+    // Cuantos logros tiene un usuario (util para reportes)
     long countByIdUsuario(Integer idUsuario);
 }

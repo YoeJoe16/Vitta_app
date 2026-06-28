@@ -1,6 +1,7 @@
 package com.ucr.salud.Controller;
 
 import com.ucr.salud.model.User;
+import com.ucr.salud.model.dto.LoginDTO;
 import com.ucr.salud.model.dto.UserDTO;
 import com.ucr.salud.service.UserService;
 import jakarta.validation.Valid;
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     /**
-     * Busca un usuario por su correo electrónico.
+     * Busca un usuario por su correo electronico.
      * Si no existe, responde con 404 Not Found.
      */
     @GetMapping("/email/{email}")
@@ -62,10 +63,10 @@ public class UserController {
 
     /**
      * Registra un nuevo usuario a partir de un DTO validado.
-     * Si hay errores de validación, retorna 400 con la lista de mensajes de error.
-     * Si el correo ya está en uso o faltan campos, retorna 400 con mensaje descriptivo.
+     * Si hay errores de validacion, retorna 400 con la lista de mensajes de error.
+     * Si el correo ya esta en uso o faltan campos, retorna 400 con mensaje descriptivo.
      */
-    @PostMapping("/add/{email}")
+    @PostMapping("/add")
     public ResponseEntity<?> add(@Valid @RequestBody UserDTO dto, BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>();
@@ -78,7 +79,7 @@ public class UserController {
             service.add(dto);
             return ResponseEntity.ok("Usuario registrado exitosamente");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El correo ya está registrado o faltan campos obligatorios");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El correo ya esta registrado o faltan campos obligatorios");
         }
     }
 
@@ -95,11 +96,11 @@ public class UserController {
     }
 
     /**
-     * Agrega (o modifica) los puntos de un usuario específico.
-     * Recibe la cantidad de puntos como parámetro de consulta.
+     * Agrega (o modifica) los puntos de un usuario especifico.
+     * Recibe la cantidad de puntos como parametro de consulta.
      * Si el usuario no existe, responde con 404 Not Found.
      */
-    @PatchMapping("/change/{id}?puntos={cantidad}")
+    @PatchMapping("/change/{id}")
     public ResponseEntity<?> agregarPuntos(@PathVariable Integer id, @RequestParam Integer puntos) {
         User actualizado = service.agregarPuntos(id, puntos);
         if (actualizado == null) {
@@ -124,10 +125,26 @@ public class UserController {
 
     /**
      * Verifica si ya existe un usuario registrado con el correo indicado.
-     * Retorna true o false según el resultado.
+     * Retorna true o false segun el resultado.
      */
     @GetMapping("/existe/{email}")
     public ResponseEntity<?> existePorEmail(@PathVariable String email) {
         return ResponseEntity.ok(service.existePorEmail(email));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO dto, BindingResult result) {
+        if (result.hasErrors()) {
+            List<String> errors = new ArrayList<>();
+            for (ObjectError error : result.getAllErrors()) {
+                errors.add(error.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errors);
+        }
+        User user = service.login(dto.getEmail(), dto.getPassword()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales invalidas");
+        }
+        return ResponseEntity.ok(user);
     }
 }
